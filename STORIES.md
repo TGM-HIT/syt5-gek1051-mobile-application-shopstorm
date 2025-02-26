@@ -11,7 +11,7 @@
 
 | ID | Description | # SP | HEAD | Prio | Status |
 | --- | --- | --- | --- | --- | --- |
-| 1 | Als Benutzer möchte ich Einkaufslisten erstellen, bearbeiten, löschen und auswählen, in welchem Geschäft ich einkaufen möchte, können. Damit kann ich meine Einkäufe gezielt planen und sicherstellen, dass ich alle benötigten Artikel kaufe. | 2 |  | MH | [] |
+| 1 | Als Benutzer möchte ich Einkaufslisten erstellen, bearbeiten, löschen und auswählen, in welchem Geschäft ich einkaufen möchte, können. Damit kann ich meine Einkäufe gezielt planen und sicherstellen, dass ich alle benötigten Artikel kaufe. | 2 |  | MH | [ ] |
 | 2 | Als Benutzer möchte ich in Einkaufslisten Produkte, bestehend aus Namen und Anzahl, erstellen, bearbeiten und entfernen können, um wissen zu können, welche Produkte ich bei einem Einkauf mitnehmen möchte. | 2 |  | MH |  |
 | 3 | Als Benutzer möchte ich die Möglichkeit haben, meine Einkaufsliste über eine synchronisierte URL zu teilen, damit andere Personen darauf zugreifen und sie in Echtzeit Änderungen sehen können, was eine Koordination ohne zusätzliche Kommunikation ermöglicht. | 4 |  | MH |  |
 | 4 | Als Nutzer möchte ich meine Einkaufslisten auch ohne Internetzugang aufrufen können, damit ich jederzeit und überall Zugriff auf meine Einkaufsdaten habe. | 2 |  | MH |  |
