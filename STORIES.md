@@ -11,12 +11,11 @@
 
 | ID | Description | # SP | HEAD | Prio | Status |
 | --- | --- | --- | --- | --- | --- |
-| 1 | Als Benutzer möchte ich Einkaufslisten erstellen, bearbeiten, löschen und auswählen, in welchem Geschäft ich einkaufen möchte, können. Damit kann ich meine Einkäufe gezielt planen und sicherstellen, dass ich alle benötigten Artikel kaufe. | 2 |  | MH |  |
+| 1 | Als Benutzer möchte ich Einkaufslisten erstellen, bearbeiten, löschen und auswählen, in welchem Geschäft ich einkaufen möchte, können. Damit kann ich meine Einkäufe gezielt planen und sicherstellen, dass ich alle benötigten Artikel kaufe. | 2 |  | MH | [x] |
 | 2 | Als Benutzer möchte ich in Einkaufslisten Produkte, bestehend aus Namen und Anzahl, erstellen, bearbeiten und entfernen können, um wissen zu können, welche Produkte ich bei einem Einkauf mitnehmen möchte. | 2 |  | MH |  |
 | 3 | Als Benutzer möchte ich die Möglichkeit haben, meine Einkaufsliste über eine synchronisierte URL zu teilen, damit andere Personen darauf zugreifen und sie in Echtzeit Änderungen sehen können, was eine Koordination ohne zusätzliche Kommunikation ermöglicht. | 4 |  | MH |  |
 | 4 | Als Nutzer möchte ich meine Einkaufslisten auch ohne Internetzugang aufrufen können, damit ich jederzeit und überall Zugriff auf meine Einkaufsdaten habe. | 2 |  | MH |  |
-| 5 | Als Benutzer möchte ich eine Suchfunktion nutzen können, um schnell bestimmte Produkte oder
-Einkaufslisten zu finden, indem ich Stichworte eingeben kann. Dies ermöglicht mir, effizient durch meine Listen zu navigieren und die benötigten Informationen ohne Umwege zu finden. | 2 |  | SH |  |
+| 5 | Als Benutzer möchte ich eine Suchfunktion nutzen können, um schnell bestimmte Produkte oder Einkaufslisten zu finden, indem ich Stichworte eingeben kann. Dies ermöglicht mir, effizient durch meine Listen zu navigieren und die benötigten Informationen ohne Umwege zu finden. | 2 |  | SH |  |
 | 6 | Als Benutzer möchte ich Listen und Produkte bearbeiten können, um auch im Nachhinein Änderungen vornehmen zu können. | 2 |  | SH |  |
 | 7 | Als Nutzer möchte ich meine Produkte mit Tags versehen können, um sie nach Abteilungen im Geschäft (z. B. Obst & Gemüse) zu kategorisieren. Dadurch kann ich meine Einkäufe gezielter planen, unnötige Wege reduzieren und alle benötigten Artikel in einem Durchgang erfassen. | 2 |  | SH |  |
 | 8 | Als Benutzer möchte ich einen Token fuer eine Einkaufsliste haben den ich mit einem anderen Benutzer teilen kann, wodurch dieser auch zugriff auf diese Liste bekommt. Dadurch koennen einkaufe mit einer anderen Person erledigt werden ohne alle Einkauflisten teilen zu muessen. | 2 |  | N2H |  |
