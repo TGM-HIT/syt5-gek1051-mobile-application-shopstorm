@@ -22,8 +22,6 @@
 | 10 | Als Nutzer möchte ich zu jedem Produkt in meiner Einkaufsliste ein Bild hinzufügen können, um eine visuelle Referenz zu erhalten. Die Anwendung soll es ermöglichen, Bilder hochzuladen, anzuzeigen und zu speichern, damit ich die Produkte beim späteren Zugriff auf die Einkaufsliste schnell und eindeutig identifizieren kann. | 3 | MT | N2H |  |
 | 11 | Als Benutzer möchte ich meine Einkaufslisten als Text- oder CSV-Datei exportieren und importieren können, um Backups zu erstellen oder Listen zwischen verschiedenen Geräten zu übertragen. | 2 | JS | N2H |  |
 
-
-
 ## Zusammenfassung
 
 | HEAD               | Gesamtbelastung |
