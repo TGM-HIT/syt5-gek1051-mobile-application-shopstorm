@@ -25,7 +25,6 @@
 | 12 | Als Benutzer möchte ich meine Einkaufslisten als Text- oder CSV-Datei exportieren können, um Backups zu erstellen. | 1 | JS | N2H | #43 |
 | 13 | Als Benutzer möchte ich in eine dunklere Darstellung wechseln können, um eine angenehmere Nutzung der Liste zu ermöglichen | 1 | CZ | N2H | #44 |
 
-
 ## Zusammenfassung
 
 | HEAD               | Gesamtbelastung |
