@@ -10,7 +10,7 @@
 ## Auflistung
 
 | ID | Description | # SP | HEAD | Prio | Status |
-| --- | --- | --- | --- | --- | --- |
+| --- | --- | --- | --- | --- | --- 
 | 1 | Als Benutzer möchte ich Einkaufslisten erstellen, bearbeiten, löschen und auswählen, in welchem Geschäft ich einkaufen möchte, können. Damit kann ich meine Einkäufe gezielt planen und sicherstellen, dass ich alle benötigten Artikel kaufe. | 2 | PB | MH | [#30](https://github.com/TGM-HIT/syt5-gek1051-mobile-application-shopstorm/issues/30) |
 | 2 | Als Benutzer möchte ich in Einkaufslisten Produkte, bestehend aus Namen und Anzahl, erstellen, bearbeiten und entfernen können, um wissen zu können, welche Produkte ich bei einem Einkauf mitnehmen möchte. | 3 | CZ | MH | [#33](https://github.com/TGM-HIT/syt5-gek1051-mobile-application-shopstorm/issues/33) |
 | 3 | Als Benutzer möchte ich die Möglichkeit haben, eine einzelne Einkaufsliste über eine synchronisierte URL zu teilen, damit andere Personen darauf zugreifen und sie in Echtzeit Änderungen sehen können, was eine Koordination ohne zusätzliche Kommunikation ermöglicht. | 4 | JS | MH | [#34](https://github.com/TGM-HIT/syt5-gek1051-mobile-application-shopstorm/issues/34) |
