@@ -19,10 +19,10 @@
 | 6 | Als Benutzer möchte ich eine Suchfunktion nutzen können, um schnell bestimmte Produkte oder Einkaufslisten zu finden, indem ich Stichworte eingeben kann. Dies ermöglicht mir, effizient durch meine Listen zu navigieren und die benötigten Informationen ohne Umwege zu finden. | 3 | MT | SH |  |
 | 7 | Als Nutzer möchte ich meine Produkte mit Tags versehen können, um sie nach Abteilungen im Geschäft (z. B. Obst & Gemüse) zu kategorisieren. Dadurch kann ich meine Einkäufe gezielter planen, unnötige Wege reduzieren und alle benötigten Artikel in einem Durchgang erfassen. | 2 | PB | SH |  |
 | 8 | Als Nutzer möchte ich die Reihenfolge der Einaufslisten per Drag-and-Drop aendern, um meine persoennlichen Praeferenzen nachzukommen. | 1 | CZ | SH |  |
-| 9 | Als Benutzer moechte ich mir anzeigen lassen, mit wem ich eine Einkaufsliste geteilt habe und den Zugang auch wieder entfernen koennen | 2 | JS | SH |  |
+| 9 | Als Benutzer moechte ich einen Namen fuer einen Link angeben, sodass ich im Nachhinein weiss, wer Zugriff auf meine Liste hat und diese Personen gezielt auch entfernen kann. | 2 | JS | SH |  |
 | 10 | Als Benutzer möchte ich die Möglichkeit haben, zusätzliche Informationen zu Produkten hinzufügen, wie z.B. Preise, Markennamen oder spezielle Angebote. Dies ermöglicht es dem Benutzer, den Einkauf gezielter zu planen und das Budget effizient zu verwalten. | 2 | MT | N2H |  |
 | 11 | Als Nutzer möchte ich zu jedem Produkt in meiner Einkaufsliste ein Bild hinzufügen können, um eine visuelle Referenz zu erhalten. Die Anwendung soll es ermöglichen, Bilder hochzuladen, anzuzeigen und zu speichern, damit ich die Produkte beim späteren Zugriff auf die Einkaufsliste schnell und eindeutig identifizieren kann. | 3 | PB | N2H |  |
-| 12 | Als Benutzer möchte ich meine Einkaufslisten als Text- oder CSV-Datei exportieren und importieren können, um Backups zu erstellen oder Listen zwischen verschiedenen Geräten zu übertragen. | 1 | JS | N2H |  |
+| 12 | Als Benutzer möchte ich meine Einkaufslisten als Text- oder CSV-Datei exportieren können, um Backups zu erstellen. | 1 | JS | N2H |  |
 | 13 | Als Benutzer moechte ich in eine dunklere Darstellung wechseln koennen, um eine angenehmere Nutzung der Liste zu ermoeglichen | 1 | CZ | N2H |  |
 
 ## Zusammenfassung
