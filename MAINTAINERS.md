@@ -16,9 +16,8 @@ repositories.
 ## Merge approval
 
 The project maintainers use LGTM (Looks Good To Me) in comments on the pull
-request to indicate acceptance prior to merging. A change requires LGTMs from
-two project maintainers. If the code is written by a maintainer, the change
-only requires one additional LGTM.
+request to indicate acceptance prior to merging. A change requires LGTMs one
+project maintainer.
 
 ## Reviewing Pull Requests
 
