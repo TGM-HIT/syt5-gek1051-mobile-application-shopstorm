@@ -14,7 +14,7 @@ To run this app locally run the following commands:
 ```bash
 git clone https://github.com/TGM-HIT/syt5-gek1051-mobile-application-shopstorm.git shopstorm && cd shopstorm
 npm i
-npm run start
+NODE_OPTIONS=--openssl-legacy-provider npm start
 ```
 
 # Live demo 
