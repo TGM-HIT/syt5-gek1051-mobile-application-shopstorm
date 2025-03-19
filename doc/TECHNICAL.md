@@ -6,7 +6,7 @@
 
 ## Abhängigkeiten
 
-Die folgenden Pakete sind als Abhängigkeiten aufgeführt:
+Die folgenden Packages wurden als dependencies gewählt:
 
 | Paketname | Version |
 |-----------|---------|
@@ -25,9 +25,9 @@ Die folgenden Pakete sind als Abhängigkeiten aufgeführt:
 | react-dom | ^16.14.0 |
 | react-scripts | ^3.4.4 |
 
-### Skripte
+### Scripts
 
-Das Projekt enthält folgende Skripte:
+Das Projekt enthält folgende Scripts:
 
 - **start**: Startet die Entwicklungsumgebung mit `react-scripts start`.
 - **build**: Erstellt eine Produktionsversion mit `react-scripts build`.
