@@ -1,38 +1,54 @@
 {
-  "name": "shopping-list-vuejs-pouchdb",
-  "version": "1.0.0",
-  "description": "Offline first shopping list app built with Vue.js and PouchDB",
-  "main": "src/app.js",
-  "scripts": {
-    "test": "karma start --single-run --browsers ChromeHeadless src/karma.conf.js",
-    "start": "node src/app.js"
-  },
+  "name": "shopping-list-react-pouchdb",
+  "version": "0.1.0",
+  "homepage": "https://ibm-watson-data-lab.github.io/shopping-list-react-pouchdb/",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ibm-watson-data-lab/shopping-list-vuejs-pouchdb.git"
+    "url": "git+https://github.com/ibm-watson-data-lab/shopping-list-react-pouchdb.git"
   },
-  "keywords": [
-    "Offline",
-    "First",
-    "PouchDB",
-    "Vue.js"
-  ],
-  "author": "Glynn Bird <glynn.bird@gmail.com>",
+  "author": "Raj Singh",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/ibm-watson-data-lab/shopping-list-vuejs-pouchdb/issues"
+    "url": "https://github.com/ibm-watson-data-lab/shopping-list-react-pouchdb/issues"
   },
-  "homepage": "https://github.com/ibm-watson-data-lab/shopping-list-vuejs-pouchdb#readme",
   "dependencies": {
-    "express": "^4.16.2",
-    "vue": "^3.1.0"
+    "ajv": "^6.5.2",
+    "cuid": "^2.1.1",
+    "gh-pages": "^2.0.0",
+    "hoek": "^5.0.3",
+    "ibm-shopping-list-model": "^0.4.0",
+    "immutable": "^3.8.1",
+    "material-ui": "^0.20.0",
+    "openssl-nodejs": "^1.0.5",
+    "pouchdb": "^7.0.0",
+    "pouchdb-find": "^7.0.0",
+    "prop-types": "^15.6.1",
+    "react": "^16.14.0",
+    "react-dom": "^16.14.0",
+    "react-scripts": "^3.4.4"
   },
-  "devDependencies": {
-    "chai": "^4.1.2",
-    "karma": "^6.4.4",
-    "karma-chai": "^0.1.0",
-    "karma-chrome-launcher": "^2.2.0",
-    "karma-mocha": "^2.0.1",
-    "mocha": "^5.0.0"
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "CI=true react-scripts test --env=jsdom",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
+    "eject": "react-scripts eject"
+  },
+  "engines": {
+    "node": "8.9.4",
+    "npm": "5.6.0"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }
