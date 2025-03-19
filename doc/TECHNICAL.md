@@ -25,7 +25,7 @@ Die folgenden Packages wurden als dependencies gewählt:
 | react-dom | ^16.14.0 |
 | react-scripts | ^3.4.4 |
 
-### Skripte
+### Scripts
 
 Das Projekt enthält folgende Scripts:
 
