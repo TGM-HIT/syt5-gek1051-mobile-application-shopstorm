@@ -16,3 +16,8 @@ Diese Anwendung bietet eine umfassende Lösung zur Verwaltung von Einkaufslisten
 ### **Einkaufsliste löschen**  
 - Der Nutzer klickt auf die **drei Punkte** der gewünschten Einkaufsliste.  
 - Zum Löschen der Liste wählt er das **„Müll“-Symbol** aus.  
+
+## Key Concept
+Die Funktion zum Verwalten von Einkaufslisten ist eine zentrale Funktionalität, die es den Nutzenden möglich macht, den eigenen Einkaufsvorgang gut planen und organisieren zu können. Als Kernfunktionalität umfasst sie die Erstellung, Bearbeitung und Löschung von Einkaufslisten, die Auswahl von bestimmten Geschäften, aus denen die Einkäufe stammen sollen.
+
+Während des Erstellvorgangs der Einkaufsliste soll der Nutzer in der Lage sein, eine individuelle Bezeichnung für die Shoppingliste festzulegen. Dies erleichtert die spätere Identifikation und Unterscheidung verschiedener Listen, besonders wenn mehrere Listen parallel geführt werden.
