@@ -12,13 +12,12 @@ const localDB = new PouchDB('shopping_list_react');
 let remoteDB = undefined;
 // try to get remote database credentials from a file (use secret.js.template as an example)
 // user can alternatively enter this connection string in the app by clicking the settings gear icon
+
 try {
-  let Credentials = require('./secret');
-  if (Credentials.default.cloudant_url) {
-    remoteDB = new PouchDB(Credentials.default.cloudant_url);
+  if (process.env.CLOUDANT_URL) {
+    remoteDB = new PouchDB(process.env.CLOUDANT_URL);
   }
-}
-catch (ex) {
+} catch (ex) {
   console.log('secret.js file missing; disabling remote sync.')
 }
 // these are framework-independent interfaces for working with lists and items in the list
