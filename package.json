@@ -1,10 +1,10 @@
 {
   "name": "shopping-list-react-pouchdb",
   "version": "0.1.0",
-  "homepage": "https://ibm-watson-data-lab.github.io/shopping-list-react-pouchdb/",
+  "homepage": ".",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ibm-watson-data-lab/shopping-list-react-pouchdb.git"
+    "url": "git+https://github.com/TGM-HIT/syt5-gek1051-mobile-application-shopstorm.git"
   },
   "author": "Raj Singh",
   "license": "Apache-2.0",
@@ -14,7 +14,6 @@
   "dependencies": {
     "ajv": "^6.5.2",
     "cuid": "^2.1.1",
-    "gh-pages": "^2.0.0",
     "hoek": "^5.0.3",
     "ibm-shopping-list-model": "^0.4.0",
     "immutable": "^3.8.1",
@@ -28,12 +27,12 @@
     "react-scripts": "^3.4.4"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "CI=true react-scripts test --env=jsdom",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build",
-    "eject": "react-scripts eject"
+    "start": "NODE_OPTIONS=--openssl-legacy-provider react-scripts start",
+    "build": "NODE_OPTIONS=--openssl-legacy-provider react-scripts build",
+    "test": "CI=true NODE_OPTIONS=--openssl-legacy-provider react-scripts test --env=jsdom",
+    "predeploy": "NODE_OPTIONS=--openssl-legacy-provider npm run build",
+    "deploy": "NODE_OPTIONS=--openssl-legacy-provider gh-pages -d build",
+    "eject": "NODE_OPTIONS=--openssl-legacy-provider react-scripts eject"
   },
   "engines": {
     "node": "8.9.4",
@@ -50,5 +49,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "gh-pages": "^6.3.0"
   }
 }
