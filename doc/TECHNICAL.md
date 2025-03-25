@@ -37,3 +37,7 @@ Tests:       X passed, X total
 ```
 
 Bei X handelt es sich um die Anzahl der Tests die durchgeführt werden und auch alle passen sollten.
+
+### Deployment
+
+Das Projekt kann mittels `gh-pages` auf Github pages gepublished werden. Das Projekt muss den branch 'gh-pages' in den Einstellungen des Projektes ausgewählt werden und dann Lokal `npm run deploy` ausgeführt werden.
