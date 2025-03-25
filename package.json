@@ -1,7 +1,7 @@
 {
   "name": "shopping-list-react-pouchdb",
   "version": "0.1.0",
-  "homepage": "https://shopstorm.org",
+  "homepage": ".",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/TGM-HIT/syt5-gek1051-mobile-application-shopstorm.git"
@@ -27,12 +27,12 @@
     "react-scripts": "^3.4.4"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "CI=true react-scripts test --env=jsdom",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build",
-    "eject": "react-scripts eject"
+    "start": "NODE_OPTIONS=--openssl-legacy-provider react-scripts start",
+    "build": "NODE_OPTIONS=--openssl-legacy-provider react-scripts build",
+    "test": "CI=true NODE_OPTIONS=--openssl-legacy-provider react-scripts test --env=jsdom",
+    "predeploy": "NODE_OPTIONS=--openssl-legacy-provider npm run build",
+    "deploy": "NODE_OPTIONS=--openssl-legacy-provider gh-pages -d build",
+    "eject": "NODE_OPTIONS=--openssl-legacy-provider react-scripts eject"
   },
   "engines": {
     "node": "8.9.4",
