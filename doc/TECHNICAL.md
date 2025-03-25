@@ -1,29 +1,13 @@
 # Technische Dokumentation
+
 ## Projektinformationen
 
 - **Name**: `shopping-list-react-pouchdb`
 - **Version**: `0.1.0`
 
-## Abhängigkeiten
+## Dependencies
 
-Die folgenden Packages wurden als dependencies gewählt:
-
-| Paketname | Version |
-|-----------|---------|
-| ajv       | ^6.5.2  |
-| cuid      | ^2.1.1  |
-| gh-pages  | ^2.0.0  |
-| hoek      | ^5.0.3  |
-| ibm-shopping-list-model | ^0.4.0 |
-| immutable | ^3.8.1  |
-| material-ui | ^0.20.0 |
-| openssl-nodejs | ^1.0.5 |
-| pouchdb   | ^7.0.0  |
-| pouchdb-find | ^7.0.0 |
-| prop-types | ^15.6.1 |
-| react     | ^16.14.0 |
-| react-dom | ^16.14.0 |
-| react-scripts | ^3.4.4 |
+Es werden react und pouchdb verwendet. Das `package.json` file hat eine Vollständige Liste der dependencies unter der section `"dependencies"`.
 
 ### Scripts
 
@@ -43,4 +27,13 @@ Das Projekt wird mit folgenden Node.js- und npm-Versionen ausgeführt:
 - **Node**: `8.9.4`
 - **npm**: `5.6.0`
 
+### Running Tests
 
+Das Project kann mit `npm test` getestet werden.
+Der Output sollte dann Zeigen, dass X von X test passen wie folgt:
+
+```bash
+Tests:       X passed, X total
+```
+
+Bei X handelt es sich um die Anzahl der Tests die durchgeführt werden und auch alle passen sollten.
