@@ -41,3 +41,67 @@ Bei X handelt es sich um die Anzahl der Tests die durchgeführt werden und auch 
 ### Deployment
 
 Das Projekt kann mittels `gh-pages` auf Github pages gepublished werden. Das Projekt muss den branch 'gh-pages' in den Einstellungen des Projektes ausgewählt werden und dann Lokal `npm run deploy` ausgeführt werden.
+
+### Synchronisation
+
+Wenn eine Internetverbindung vorhanden ist werden die in der lokalen PouchDB datenbank gespeicherten Daten mit den in der CouchDB instanz gespeicherten Daten synchronisiert.
+
+### Datenspeicherung
+
+#### ShoppingList
+
+Eine ShoppingList hat den folgenden Aufbau:
+
+```json
+{
+  _id: "list:<ID>",
+  _rev: "<Die Revision der shoppingList>",
+  _deleted: false,
+  type: "list",
+  version: 1,
+  title: "<title>"
+  checked: false,
+  place: <Unused>
+  createdAt: <Wann die Liste erstellt wurde>,
+  updatedAt: <Wann die Liste das letzte mal verändert wurde>
+}
+```
+
+- \_id: Die ID der shoppingList mit dem prefix 'list:'
+- \_rev: Die aktuelle Revision der shoppingList
+- \_deleted: Gibt an ob die Liste bereits Lokal gelöscht wurde aber noch nicht aus der Datenbank gelöscht wurde
+- type: Ob es sich um eine Liste oder ein Item handelt
+- version: Welche version diese Liste hat
+- title: Der Titel der Liste
+- place: Sollte ein Ort des Shops angeben aber dieses feature wurde nicht implementiert
+- createdAt: Wann die Liste erstellt wurde
+- updatedAt: Wann die Liste geupdated wurde
+
+#### Item
+
+Ein Item gibt ein einzelnes Element einer ShoppingList wieder und ist wie folgt aufgebaut:
+
+```json
+{
+  "_id": "item:<ID>",
+  "_rev": <Revision des Items>,
+  "_deleted": false,
+  "type": "item",
+  "version": 1,
+  "list": "list:<ID>",
+  "title": "<title>",
+  "checked": false,
+  "createdAt": <Wann das Item erstellt wurde>,
+  "updatedAt": <Wann das Item geupdated wurde>
+}
+```
+
+- \_id: Die ID des Items mit dem prefix 'item:'
+- \_rev: Die aktuelle Revision des Items
+- \_deleted: Gibt an ob das Item bereits Lokal gelöscht wurde aber noch nicht aus der Datenbank gelöscht wurde
+- type: Ob es sich um eine Liste oder ein Item handelt
+- version: Welche version dieses Item hat
+- title: Der Name des Items
+- checked: Ob das Item abgehakt wurde
+- createdAt: Wann die Liste erstellt wurde
+- updatedAt: Wann die Liste geupdated wurde
