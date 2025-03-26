@@ -18,6 +18,20 @@ Diese Anwendung bietet eine umfassende Lösung zur Verwaltung von Einkaufslisten
 - Zum Löschen der Liste wählt er das **„Müll“-Symbol** aus.  
 
 ## Key Concept
-Die Funktion zum Verwalten von Einkaufslisten ist eine zentrale Funktionalität, die es den Nutzenden möglich macht, den eigenen Einkaufsvorgang gut planen und organisieren zu können. Als Kernfunktionalität umfasst sie die Erstellung, Bearbeitung und Löschung von Einkaufslisten, die Auswahl von bestimmten Geschäften, aus denen die Einkäufe stammen sollen.
+Diese Einkaufslisten-App ist eine kleine Single-Page-Webanwendung, bestehend aus einer HTML-Datei, einigen CSS-Dateien und einer JavaScript-Datei. Die Webanwendung ermöglicht es Nutzern, mehrere Einkaufslisten zu erstellen (z.B. Lebensmittel) mit verschiedenen Artikeln pro Liste (z.B. Brot, Wasser).
 
-Während des Erstellvorgangs der Einkaufsliste soll der Nutzer in der Lage sein, eine individuelle Bezeichnung für die Shoppingliste festzulegen. Dies erleichtert die spätere Identifikation und Unterscheidung verschiedener Listen, besonders wenn mehrere Listen parallel geführt werden.
+**Was macht diese App besonders?** Ihre Flexibilität und Benutzerfreundlichkeit beim Einkaufsmanagement. Der Ansatz konzentriert sich darauf, Nutzern eine optimale Kontrolle und Planung ihrer Einkäufe zu bieten, unabhängig von Geräten oder Netzwerkbedingungen.
+
+**Einkaufslisten erstellen und verwalten.** Die Anwendung ermöglicht das mühelose Erstellen von Einkaufslisten mit umfangreichen Bearbeitungsmöglichkeiten. Nutzer können Listen nach Belieben hinzufügen, modifizieren und löschen, was eine maximale Flexibilität bei der Einkaufsplanung gewährleistet.
+
+**Geschäftsauswahl mit intelligenten Funktionen.** Nutzer können festlegen, in welchem Geschäft sie einkaufen möchten. Die App bietet intelligente Vorschläge und Unterstützung bei der Geschäftsauswahl, um Einkäufe zu optimieren und zu vereinfachen.
+Dynamische Listenverwaltung. Artikel können jederzeit hinzugefügt und entfernt werden. Dies ermöglicht eine flexible und individuelle Gestaltung der Einkaufslisten, die sich genau an die Bedürfnisse der Nutzer anpasst.
+
+**Sicheres Löschen und Archivieren.** Die Löschfunktion wurde mit Bedacht konzipiert. Nutzer können Listen gezielt entfernen, wobei Sicherheitsmechanismen versehentliche Löschungen verhindern. Optional kann ein Archivierungssystem implementiert werden.
+
+**Benutzerfreundlichkeit im Fokus.** Die Anwendung zielt auf eine intuitive Bedienoberfläche ab, die es Nutzern ermöglicht, schnell und einfach Einkaufslisten zu erstellen, zu bearbeiten und zu verwalten.
+Die App kann als Progressive Web App entwickelt werden, die auf verschiedenen Geräten funktioniert und optional Offline-Funktionalitäten bietet. Technologisch könnte sie auf Frameworks wie Vue.js und Datenbankbibliotheken wie PouchDB aufbauen, um Datenpersistenz und Synchronisation zu gewährleisten.
+
+Zielgruppe sind alle, die ihre Einkäufe strukturiert und planvoll angehen möchten - von Einzelpersonen über Familien bis hin zu Haushalten mit komplexen Einkaufsanforderungen.
+
+## Implementation
