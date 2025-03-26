@@ -35,3 +35,109 @@ Die App kann als Progressive Web App entwickelt werden, die auf verschiedenen Ge
 Zielgruppe sind alle, die ihre Einkäufe strukturiert und planvoll angehen möchten - von Einzelpersonen über Familien bis hin zu Haushalten mit komplexen Einkaufsanforderungen.
 
 ## Implementation
+### Übersicht
+
+
+```javascript
+/**
+   * Create a new shopping list or item based on where the event came from
+   * @param {event} evt The click event on the UI element requesting to the action. Get the name from state and decide whether to add a list or an item based on the `state.view`
+   */
+  createNewShoppingListOrItem = (e) => {
+    e.preventDefault();
+    this.setState({adding: false});
+   
+    if (this.state.view === 'lists') {
+      let shoppingList = this.props.shoppingListFactory.newShoppingList({
+        title: this.state.newName
+      });
+      this.props.shoppingListRepository.put(shoppingList).then(this.getShoppingLists);
+    } else if (this.state.view === 'items') {
+      let item = this.props.shoppingListFactory.newShoppingListItem({
+        title: this.state.newName
+      }, this.state.shoppingList);
+      this.props.shoppingListRepository.putItem(item).then(item => {
+        this.getShoppingListItems(this.state.shoppingList._id).then(items => {
+          this.setState({
+            view: 'items',
+            shoppingListItems: items
+          });
+        });
+      });
+    }
+  }
+```
+
+## Detaillierte Erklärung
+
+### 1. Methodensignatur und Dokumentation
+
+- **Typ**: Pfeilfunktion (Arrow Function)
+- **Parameter**: `e` (Ereignis-Objekt)
+- **Zweck**: Erstellen neuer Einkaufslisten oder Listenelemente
+
+### 2. Ereignisbehandlung
+
+```javascript
+e.preventDefault();
+this.setState({adding: false});
+```
+
+- Verhindert Standardereignisverhalten
+- Beendet den Hinzufügemodus
+
+### 3. Erstellung von Einkaufslisten
+
+```javascript
+if (this.state.view === 'lists') {
+  let shoppingList = this.props.shoppingListFactory.newShoppingList({
+    title: this.state.newName
+  });
+  this.props.shoppingListRepository.put(shoppingList).then(this.getShoppingLists);
+}
+```
+
+**Ablauf**:
+- Prüft, ob Ansicht auf 'lists' gesetzt ist
+- Erstellt neue Einkaufsliste mit:
+  - Factory-Methode
+  - Titel aus Komponentenzustand
+- Speichert Liste über Repository
+- Aktualisiert Einkaufslisten nach Speicherung
+
+### 4. Erstellung von Listenelementen
+
+```javascript
+else if (this.state.view === 'items') {
+  let item = this.props.shoppingListFactory.newShoppingListItem({
+    title: this.state.newName
+  }, this.state.shoppingList);
+  this.props.shoppingListRepository.putItem(item).then(item => {
+    this.getShoppingListItems(this.state.shoppingList._id).then(items => {
+      this.setState({
+        view: 'items',
+        shoppingListItems: items
+      });
+    });
+  });
+}
+```
+
+**Ablauf**:
+- Prüft, ob Ansicht auf 'items' gesetzt ist
+- Erstellt neues Listenelement mit:
+  - Factory-Methode
+  - Titel aus Komponentenzustand
+  - Referenz zur aktuellen Einkaufsliste
+- Speichert Element über Repository
+- Lädt Listenelemente neu
+- Aktualisiert Komponentenzustand
+
+## Kernkonzepte
+
+- **Factory-Methoden**: Objektiverstellung
+- **Asynchrone Operationen**: Promises
+- **Zustandsmanagement**: React-Komponentenzustand
+- **Kontextabhängige Objekterstellung**
+
+
