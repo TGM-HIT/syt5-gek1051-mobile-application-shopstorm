@@ -105,3 +105,11 @@ Ein Item gibt ein einzelnes Element einer ShoppingList wieder und ist wie folgt 
 - checked: Ob das Item abgehakt wurde
 - createdAt: Wann die Liste erstellt wurde
 - updatedAt: Wann die Liste geupdated wurde
+
+## Resources
+
+- [Progressive Web Apps](https://developers.google.com/web/progressive-web-apps/)
+- [PouchDB](https://pouchdb.com/)
+- [Apache CouchDB](https://couchdb.apache.org/)
+- [JavaScript](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
+- [React](https://react.dev)
