@@ -113,3 +113,5 @@ Ein Item gibt ein einzelnes Element einer ShoppingList wieder und ist wie folgt 
 - [Apache CouchDB](https://couchdb.apache.org/)
 - [JavaScript](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
 - [React](https://react.dev)
+- [CouchDB in Docker](https://hub.docker.com/_/couchdb)
+- [React API](https://react.dev/reference/react/apis)
