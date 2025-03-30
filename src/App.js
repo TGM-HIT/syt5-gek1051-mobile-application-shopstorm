@@ -49,6 +49,8 @@ class App extends React.Component {
     if (localStorage.getItem("remoteUrl") !== undefined) {
       this.remoteDB = new PouchDB(localStorage.getItem("remoteUrl"));
       this.syncToRemote();
+    } else {
+      this.remoteDB = props.remoteDB;
     }
 
     this.state = {
