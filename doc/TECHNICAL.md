@@ -29,8 +29,11 @@ Das Projekt wird mit folgenden Node.js- und npm-Versionen ausgeführt:
 
 ### Running Tests
 
-Das Project kann mit `npm test` getestet werden.
-Der Output sollte dann Zeigen, dass X von X test passen wie folgt:
+Das Project kann mit `npm test` getestet werden. Hierbei wird `react-scripts test` ausgeführt.
+
+Um einen Test-Case zu erstellen muss ein Test-file in `src/__tests__/filename.js` erstellt werden.
+
+Wenn dannach `npm test` ausgeführt wird sollte der Output dann Zeigen, dass X von X test passen wie folgt:
 
 ```bash
 Tests:       X passed, X total
@@ -77,6 +80,8 @@ Eine ShoppingList hat den folgenden Aufbau:
 - createdAt: Wann die Liste erstellt wurde
 - updatedAt: Wann die Liste geupdated wurde
 
+Für eine Ausführliche Dokumentation der Verwaltung der Shoppinglist bitte die [Einkaufslistenverwanltungs Dokumentation](https://github.com/TGM-HIT/syt5-gek1051-mobile-application-shopstorm/blob/main/doc/EINKAUFSLISTENVERWALTUNG.md) ansehen.
+
 #### Item
 
 Ein Item gibt ein einzelnes Element einer ShoppingList wieder und ist wie folgt aufgebaut:
@@ -106,6 +111,8 @@ Ein Item gibt ein einzelnes Element einer ShoppingList wieder und ist wie folgt 
 - createdAt: Wann die Liste erstellt wurde
 - updatedAt: Wann die Liste geupdated wurde
 
+Für eine Ausführliche Dokumentation der Verwaltung der Items bitte die [Dokumentation der Shoppinglist Items](https://github.com/TGM-HIT/syt5-gek1051-mobile-application-shopstorm/blob/main/doc/LIST_ITEMS.md) ansehen.
+
 ## Resources
 
 - [Progressive Web Apps](https://developers.google.com/web/progressive-web-apps/)
@@ -114,4 +121,4 @@ Ein Item gibt ein einzelnes Element einer ShoppingList wieder und ist wie folgt 
 - [JavaScript](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
 - [React](https://react.dev)
 - [CouchDB in Docker](https://hub.docker.com/_/couchdb)
-- [React API](https://react.dev/reference/react/apis)
+- [react-scripts](https://github.com/facebook/create-react-app#readme)
