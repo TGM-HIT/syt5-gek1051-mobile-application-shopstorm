@@ -46,12 +46,15 @@ const NOITEMSMSG = "Click the + sign below to create a shopping list item."
 class App extends React.Component {
   constructor(props) {
     super(props);
-    if (localStorage.getItem("remoteUrl") !== undefined || localStorage.getItem("remoteUrl") !== null) {
-      this.remoteDB = new PouchDB(localStorage.getItem("remoteUrl"));
-      this.syncToRemote();
-    } else {
+    try {
+      if (localStorage.getItem("remoteUrl") !== undefined || localStorage.getItem("remoteUrl") !== null) {
+        this.remoteDB = new PouchDB(localStorage.getItem("remoteUrl"));
+        this.syncToRemote();
+      }
+    } catch {
       this.remoteDB = props.remoteDB;
     }
+
 
     this.state = {
       shoppingList: null, 
