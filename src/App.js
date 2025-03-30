@@ -85,15 +85,47 @@ class App extends React.Component {
   /**
    * Synchronize local PouchDB with a remote CouchDB or Cloudant
    */
+  
   syncToRemote = () => {
-    this.props.localDB.sync(this.remoteDB, {live: true, retry: true})
-    .on('change', change => {
-      this.getPouchDocs();
-    })
-    // .on('paused', info => console.log('replication paused.'))
-    // .on('active', info => console.log('replication resumed.'))
-    .on('error', err => console.log('uh oh! an error occured while synching.'));
-}
+    this.props.localDB.sync(this.remoteDB, { live: true, retry: true })
+      .on('change', change => {
+        console.log('Change detected during sync:', change);
+        if (change.direction === 'pull') {
+          this.handleConflicts(change.change.docs);
+        }
+        this.getPouchDocs();
+      })
+    .on('error', err => console.error('Error during sync:', err));
+  };
+
+
+  handleConflicts = (docs) => {
+    docs.forEach(doc => {
+      if (doc._conflicts && doc._conflicts.length > 0) {
+        console.log('Conflicts detected for document:', doc._id);
+        this.resolveConflict(doc);
+      }
+    });
+  };
+
+  resolveConflict = (doc) => {
+    this.props.localDB.get(doc._id, { conflicts: true })
+      .then(conflictedDoc => {
+        console.log('Resolving conflicts for:', conflictedDoc);
+
+        const losingRevisions = conflictedDoc._conflicts;
+
+        const deletePromises = losingRevisions.map(rev =>
+          this.props.localDB.remove(conflictedDoc._id, rev)
+        );
+
+        return Promise.all(deletePromises).then(() => {
+          console.log(`Resolved conflicts for document: ${conflictedDoc._id}`);
+          this.getShoppingLists();
+        });
+      })
+    .catch(err => console.error('Error resolving conflict:', err));
+  };
 
   /**
    * From the local DB, load all the shopping lists and item counts and which are checked
@@ -188,13 +220,25 @@ class App extends React.Component {
    * @param {string} itemid id of an item
    * @param {string} newname new name of the item
    */
-  renameShoppingListItem = (itemid, newname) => {
-    console.log('IN renameShoppingListItem with id='+itemid+', name='+newname);
-    this.props.shoppingListRepository.getItem(itemid).then(item => {
-      item = item.set('title', newname);
-      return this.props.shoppingListRepository.putItem(item);
-    }).then(this.refreshShoppingListItems(this.state.shoppingList._id));
-  }
+  renameShoppingList = (listid, newname) => {
+    this.props.shoppingListRepository.get(listid)
+      .then(shoppingList => {
+        shoppingList = shoppingList.set('title', newname);
+        return this.props.shoppingListRepository.put(shoppingList);
+      })
+      .catch(err => {
+        if (err.status === 409) {
+          console.warn('Conflict detected while renaming list:', listid);
+          return this.props.localDB.get(listid, { conflicts: true }).then(conflictedDoc => {
+            this.resolveConflict(conflictedDoc); // Handle conflict
+          });
+        } else {
+          console.error('Error renaming shopping list:', err);
+        }
+      })
+    .finally(this.getShoppingLists);
+  };
+
 
   /**
    * Delete an item
