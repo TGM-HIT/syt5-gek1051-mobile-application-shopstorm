@@ -46,9 +46,10 @@ const NOITEMSMSG = "Click the + sign below to create a shopping list item."
 class App extends React.Component {
   constructor(props) {
     super(props);
-    // manage remoteDB here because user might change it via the UI
-    // but don't put it in state because changing the backend db doesn't require a re-render
-    this.remoteDB = props.remoteDB; 
+    if (localStorage.getItem("remoteUrl") !== undefined) {
+      this.remoteDB = new PouchDB(localStorage.getItem("remoteUrl"));
+      this.syncToRemote();
+    }
 
     this.state = {
       shoppingList: null, 
@@ -421,6 +422,8 @@ class App extends React.Component {
    */
   handleSubmitSettings = () => {
     try {
+      localStorage.setItem("remoteUrl", this.tempdburl);
+      this.tempdburl = localStorage.getItem("remoteUrl");
       this.remoteDB = new PouchDB(this.tempdburl);
       this.syncToRemote();
     }
@@ -428,7 +431,11 @@ class App extends React.Component {
       console.log('Error setting remote database: ');
       console.log(ex);
     }
-    this.handleCloseSettings();
+    try {
+      if (this.state.settingsOpen) {
+        this.handleCloseSettings();
+      }
+    } catch {}
   }
 
   /**
