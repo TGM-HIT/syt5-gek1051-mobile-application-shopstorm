@@ -1,21 +1,25 @@
 import React from 'react';
 import {List} from 'immutable';
-// We're using Material Design React components from http://www.material-ui.com
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import getMuiTheme from 'material-ui/styles/getMuiTheme';
-import AppBar from 'material-ui/AppBar';
-import Dialog from 'material-ui/Dialog';
-import FlatButton from 'material-ui/FlatButton';
-import FloatingActionButton from 'material-ui/FloatingActionButton';
-import ContentAdd from 'material-ui/svg-icons/content/add';
-import TextField from 'material-ui/TextField';
-import Paper from 'material-ui/Paper';
-import {Card, CardTitle} from 'material-ui/Card';
-import IconButton from 'material-ui/IconButton';
-import KeyboardBackspace from 'material-ui/svg-icons/hardware/keyboard-backspace';
-import SettingsIcon from 'material-ui/svg-icons/action/settings';
-import AboutIcon from 'material-ui/svg-icons/action/info-outline';
-import {grey800, blueGrey500, pinkA100, white} from 'material-ui/styles/colors';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import AppBar from '@mui/material/AppBar';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
+import Button from '@mui/material/Button';
+import Fab from '@mui/material/Fab';
+import AddIcon from '@mui/icons-material/Add';
+import TextField from '@mui/material/TextField';
+import Paper from '@mui/material/Paper';
+import Card from '@mui/material/Card';
+import CardHeader from '@mui/material/CardHeader';
+import Typography from '@mui/material/Typography';
+import Toolbar from '@mui/material/Toolbar';
+import IconButton from '@mui/material/IconButton';
+import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
+import SettingsIcon from '@mui/icons-material/Settings';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import { grey, blueGrey, pink } from '@mui/material/colors';
 
 import PouchDB from 'pouchdb';
 
@@ -23,17 +27,16 @@ import ShoppingLists from './components/ShoppingLists';
 import ShoppingList from './components/ShoppingList';
 
 // create a custom color scheme for Material-UI
-const muiTheme = getMuiTheme({
+const muiTheme = createTheme({
   palette: {
-    textColor: grey800, 
-    alternateTextColor: white, 
-    primary1Color: pinkA100,
-    accent1Color: blueGrey500
+    textColor: grey, 
+    primary1Color: pink,
+    accent1Color: blueGrey
   }
 });
 
 const appBarStyle = {
-  backgroundColor: blueGrey500, 
+  backgroundColor: blueGrey, 
   width: "100%", 
 };
 
@@ -81,6 +84,33 @@ class App extends React.Component {
         this.syncToRemote();
       }
   }
+
+  checkAllListItems = (listId) => {
+    const { shoppingListItems } = this.state;
+    const updatedItems = shoppingListItems.map(item => 
+      item.listId === listId ? { ...item, checked: !item.checked } : item
+    );
+    this.setState({ shoppingListItems: updatedItems });
+  };
+
+  toggleItemCheckFunc = (e) => {
+    const itemId = e.target.dataset.id;
+    
+    // Validate itemId
+    if (!itemId || typeof itemId !== 'string') {
+      console.error("Invalid item ID:", itemId);
+      return;
+    }
+  
+    // Toggle the item's checked state
+    this.props.shoppingListRepository.getItem(itemId)
+      .then((item) => {
+        item = item.set('checked', !item.checked);
+        return this.props.shoppingListRepository.putItem(item);
+      })
+      .then(() => this.refreshShoppingListItems(this.state.shoppingList._id))
+      .catch((err) => console.error("Error toggling item:", err));
+  };
 
   /**
    * Synchronize local PouchDB with a remote CouchDB or Cloudant
@@ -134,37 +164,31 @@ class App extends React.Component {
     let checkedCount = List();
     let totalCount = List();
     let lists = null;
-    this.props.shoppingListRepository.find().then( foundLists => {
-      console.log('GOT SHOPPING LISTS FROM POUCHDB. COUNT: '+foundLists.size);
-      lists = foundLists;
-      return foundLists;
-    }).then( foundLists => {
-      return this.props.shoppingListRepository.findItemsCountByList();
-    }).then( countsList => { 
-      console.log('TOTAL COUNT LIST');
-      console.log(countsList);
-      totalCount = countsList;
-      return this.props.shoppingListRepository.findItemsCountByList({
-        selector: {
-          type: 'item', 
-          checked: true
-        },
-        fields: ['list']
+    this.props.shoppingListRepository
+      .find()
+      .then((foundLists) => {
+        lists = foundLists;
+        return foundLists;
+      })
+      .then(() => this.props.shoppingListRepository.findItemsCountByList())
+      .then((countsList) => {
+        totalCount = countsList;
+        return this.props.shoppingListRepository.findItemsCountByList({
+          selector: { type: 'item', checked: true },
+          fields: ['list'],
+        });
+      })
+      .then((checkedList) => {
+        checkedCount = checkedList;
+        this.setState({
+          view: 'lists',
+          shoppingLists: lists,
+          shoppingListItems: null,
+          checkedTotalShoppingListItemCount: checkedCount,
+          totalShoppingListItemCount: totalCount,
+        });
       });
-    }).then( checkedList => {
-      console.log('CHECKED LIST');
-      console.log(checkedList);
-      checkedCount = checkedList;
-      this.setState({
-        view: 'lists', 
-        shoppingLists: lists, 
-        shoppingList: null,
-        shoppingListItems: null, 
-        checkedTotalShoppingListItemCount: checkedCount, 
-        totalShoppingListItemCount: totalCount
-      });
-    });
-  }
+  };
 
   /**
    * Get a shopping list by id 
@@ -255,11 +279,22 @@ class App extends React.Component {
    * @param {event} evt The click event on the UI element requesting to toggle state. It's id is the item id
    */
   toggleItemCheck = (evt) => {
-    let itemid = evt.target.dataset.id;
-    this.props.shoppingListRepository.getItem(itemid).then(item => {
+    const itemid = evt.target.dataset.id;
+
+    // Validate that itemid exists and is a string
+    if (!itemid || typeof itemid !== 'string') {
+      console.error('Invalid _id:', itemid);
+      return;
+    }
+
+    this.props.shoppingListRepository.getItem(itemid)
+    .then((item) => {
+      // Toggle the 'checked' state of the item
       item = item.set('checked', !item.checked);
       return this.props.shoppingListRepository.putItem(item);
-    }).then(this.refreshShoppingListItems(this.state.shoppingList._id));
+    })
+    .then(() => this.refreshShoppingListItems(this.state.shoppingList._id))
+    .catch((err) => console.error('Error toggling item check:', err));
   }
 
   /**
@@ -325,36 +360,37 @@ class App extends React.Component {
    */
   createNewShoppingListOrItem = (e) => {
     e.preventDefault();
-    this.setState({adding: false});
-    
-    if (this.state.view === 'lists') {
-      let shoppingList = this.props.shoppingListFactory.newShoppingList({
-        title: this.state.newName
-      });
-      this.props.shoppingListRepository.put(shoppingList).then(this.getShoppingLists);
+    const { newName, view, shoppingList } = this.state;
 
-    } else if (this.state.view === 'items') {
-      let item = this.props.shoppingListFactory.newShoppingListItem({
-        title: this.state.newName
-      }, this.state.shoppingList);
-      this.props.shoppingListRepository.putItem(item).then(item => {
-        this.getShoppingListItems(this.state.shoppingList._id).then(items => {
-          this.setState({
-            view: 'items', 
-            shoppingListItems: items
-          });
+    if (!newName.trim()) return;
+
+    this.setState({ adding: false, newName: '' });
+
+    if (view === 'lists') {
+      const newShoppingList = this.props.shoppingListFactory.newShoppingList({
+        title: newName.trim(),
+      });
+      this.props.shoppingListRepository.put(newShoppingList).then(this.getShoppingLists);
+    } else if (view === 'items') {
+      const newItem = this.props.shoppingListFactory.newShoppingListItem(
+        { title: newName.trim() },
+        shoppingList
+      );
+      this.props.shoppingListRepository.putItem(newItem).then(() => {
+        this.getShoppingListItems(shoppingList._id).then((items) => {
+          this.setState({ shoppingListItems: items });
         });
       });
     }
-  }
+  };
 
   /**
    * Set the new name the user has typed in state for pickup later by other functions
    * @param {event} evt The change event on the UI element that let's user type a name
    */
-  updateName = (evt) => {
-    this.setState({newName: evt.target.value});
-  }
+  updateName = (e) => {
+    this.setState({ newName: e.target.value });
+  };
 
   /**
    * Tell the component we're in adding list or item mode
@@ -366,31 +402,30 @@ class App extends React.Component {
   /**
    * Show UI for typing in a new name
    */
-  renderNewNameUI = () => {
-    return (
-      <form onSubmit={this.createNewShoppingListOrItem} style={{marginTop:'12px'}}>
-          <Paper>
-            <TextField className="form-control" type="text" 
-              autoFocus={true} 
-              hintText="Name..." 
-              onChange={this.updateName} 
-              fullWidth={false} 
-              style={{padding:'0px 12px',width:'calc(100% - 24px)'}}
-              underlineStyle={{width:'calc(100% - 24px)'}}/>
-          </Paper>
-      </form>
-    );
-  }
+  renderNewNameUI = () => (
+    <form onSubmit={this.createNewShoppingListOrItem} style={{ marginTop: '12px' }}>
+      <Paper>
+        <TextField
+          autoFocus
+          placeholder="Name..."
+          value={this.state.newName}
+          onChange={this.updateName}
+          fullWidth
+          style={{ padding: '0px 12px', width: 'calc(100% - 24px)' }}
+        />
+      </Paper>
+    </form>
+  );
 
   /**
    * Show UI for shopping lists
    */
   renderShoppingLists = () => {
     if (this.state.shoppingLists.length < 1) 
-      return ( <Card style={{margin:"12px 0"}}><CardTitle title={NOLISTMSG} /></Card> );
+      return ( <Card style={{margin:"12px 0"}}><CardHeader title={NOLISTMSG} /></Card> );
     return (
       <ShoppingLists 
-        shoppingLists={this.state.shoppingLists} 
+        shoppingLists={this.state.shoppingLists}
         openListFunc={this.openShoppingList} 
         deleteListFunc={this.deleteShoppingList} 
         renameListFunc={this.renameShoppingList} 
@@ -405,7 +440,7 @@ class App extends React.Component {
    */
   renderShoppingListItems = () => {
     if (this.state.shoppingListItems.size < 1) 
-      return ( <Card style={{margin:"12px 0"}}><CardTitle title={NOITEMSMSG} /></Card> );
+      return ( <Card style={{margin:"12px 0"}}><CardHeader title={NOITEMSMSG} /></Card> );
     return (
       <ShoppingList 
         shoppingListItems={this.state.shoppingListItems} 
@@ -419,24 +454,22 @@ class App extends React.Component {
    * If we're showing items from a shopping list, show a back button.  
    * If we're showing shopping lists, show a settings button.
    */
-  renderBackButton = () => {
-    if (this.state.view === 'items') 
-      return (<IconButton touch={true} onClick={this.getShoppingLists}><KeyboardBackspace /></IconButton>)
-    else 
-      return (<img src="cart_sm.png" width="48px" alt="Shopping List app logo" />)
-  }
+  renderBackButton = () => (
+    <IconButton onClick={this.getShoppingLists}>
+      <KeyboardBackspaceIcon />
+    </IconButton>
+  );
 
-  renderActionButtons = () => {
-    const iconStyle = {
-      fill: 'white'
-    };
-    return (
-      <div>
-      <IconButton touch={true} onClick={this.handleOpenSettings} iconStyle={iconStyle}><SettingsIcon /></IconButton>
-      <IconButton touch={true} onClick={this.handleOpenAbout} iconStyle={iconStyle}><AboutIcon /></IconButton>
-      </div>
-    );
-  }
+  renderActionButtons = () => (
+    <>
+      <IconButton onClick={() => this.setState({ settingsOpen: true })}>
+        <SettingsIcon />
+      </IconButton>
+      <IconButton onClick={() => this.setState({ aboutOpen: true })}>
+        <InfoOutlinedIcon />
+      </IconButton>
+    </>
+  );
 
   /**
    * Tell component we want to show settings dialog
@@ -488,84 +521,97 @@ class App extends React.Component {
   }
 
   /**
-   * Show settings dialog UI
-   */
-  showSettingsDialog = () => {
-    const actions = [
-        <FlatButton label="Cancel" primary={false} keyboardFocused={true} onClick={this.handleCloseSettings} />,
-        <FlatButton label="Submit" primary={true} onClick={this.handleSubmitSettings} />,
-    ];
-
-    return (
-      <Dialog 
-        title="Shopping List Settings" 
-        actions={actions} 
-        modal={false} 
-        open={this.state.settingsOpen} 
-        onRequestClose={this.handleCloseSettings}
-      >
-      <p>Enter a fully qualified URL (including username and password) to a remote IBM Cloudant, Apache CouchDB, or PouchDB database to sync your shopping list.</p>
-      <TextField id="db-url" 
-        floatingLabelText="https://username:password@localhost:5984/database" 
-        fullWidth={true} 
-        onChange={ e => {this.tempdburl = e.target.value} } />
-      </Dialog>
-    )
-  }
-
-  /**
-   * Show about dialog UI
-   */
-  showAboutDialog = () => {
-    const actions = [
-        <FlatButton label="Close" primary={false} keyboardFocused={true} onClick={this.handleCloseAbout} />
-    ];
-
-    return (
-      <Dialog 
-        title="About" 
-        actions={actions} 
-        modal={false} 
-        open={this.state.aboutOpen} 
-        onRequestClose={this.handleAboutSettings}
-      >
-      <p>
-        <a href="https://github.com/ibm-watson-data-lab/shopping-list" target="_blank" rel="noopener noreferrer">Shopping List is a series of Offline First demo apps, each built using a different stack.</a>
-          These demo apps cover Progressive Web Apps, hybrid mobile apps, native mobile apps, and desktop apps. This particular demo app is a <strong>Progressive Web App</strong>
-          built using <strong>React and PouchDB</strong>. <a href="https://github.com/ibm-watson-data-lab/shopping-list-react-pouchdb" target="_blank" rel="noopener noreferrer">Get the source code</a>.
-      </p>
-      </Dialog>
-    )
-  }
-
-  /**
    * Show the UI
    */
   render() {
-    let screenname = "Shopping List";
-    if (this.state.view === 'items') screenname = this.state.shoppingList.title;
+    const { adding, view, settingsOpen, aboutOpen } = this.state;
+
     return (
-      <MuiThemeProvider muiTheme={muiTheme}>
-      <div className="App">
-        <AppBar title={screenname} 
-                iconElementLeft={this.renderBackButton()}
-                style={appBarStyle} 
-                iconElementRight={this.renderActionButtons()} />
-        <div className={'listsanditems'} style={{margin:'8px'}}>
-          {this.state.adding ? this.renderNewNameUI() : <span/>}
-          {this.state.view === 'lists' ? this.renderShoppingLists() : this.renderShoppingListItems()}
+      <ThemeProvider theme={muiTheme}>
+        <div className="App">
+          {/* AppBar */}
+          <AppBar position="static" sx={{ backgroundColor: blueGrey[500] }}>
+            <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
+              {view === 'items' ? this.renderBackButton() : <Typography variant="h6">Logo</Typography>}
+              <Typography variant="h6">
+                {view === 'items' ? this.state.shoppingList?.title : 'Shopping List'}
+              </Typography>
+              {this.renderActionButtons()}
+            </Toolbar>
+          </AppBar>
+
+          {/* Main Content */}
+          <div className="listsanditems" style={{ margin: '8px' }}>
+            {adding && this.renderNewNameUI()}
+            {view === 'lists' ? (
+              <ShoppingLists
+                shoppingLists={this.state.shoppingLists}
+                openListFunc={this.openShoppingList}
+                deleteFunc={this.deleteShoppingList}
+                checkAllFunc={this.checkAllListItems}
+              />
+            ) : (
+              <ShoppingList
+                shoppingListItems={this.state.shoppingListItems}
+                deleteFunc={this.deleteShoppingListItem}
+                toggleItemCheckFunc={this.toggleItemCheck} 
+              />
+            )}
+          </div>
+
+          {/* Floating Action Button */}
+          <Fab
+            color="primary"
+            size="small"
+            sx={{ position: 'fixed', bottom: '25px', right: '25px' }}
+            onClick={() => this.setState({ adding: true })}
+          >
+            <AddIcon />
+          </Fab>
+
+          {/* Settings Dialog */}
+          <Dialog open={settingsOpen} onClose={this.handleCloseSettings}>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault(); // Prevent default form submission behavior
+                localStorage.setItem('remoteUrl', this.tempdburl); // Save remote URL
+                this.handleCloseSettings(); // Close the dialog
+              }}
+            >
+              <DialogTitle>Shopping List Settings</DialogTitle>
+              <DialogContent>
+                <p>
+                  Enter a fully qualified URL (including username and password) to a remote IBM Cloudant,
+                  Apache CouchDB, or PouchDB database to sync your shopping list.
+                </p>
+                <TextField
+                  fullWidth
+                  placeholder="https://username:password@localhost:5984/database"
+                  onChange={(e) => (this.tempdburl = e.target.value)} // Update tempdburl state
+                />
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={this.handleCloseSettings}>Cancel</Button>
+                <Button type="submit" color="primary" variant="contained" onClick={this.handleSubmitSettings}>
+                  Submit
+                </Button>
+              </DialogActions>
+            </form>
+          </Dialog>
+
+          {/* About Dialog */}
+          <Dialog open={aboutOpen} onClose={() => this.setState({ aboutOpen: false })}>
+            <DialogTitle>About</DialogTitle>
+            <DialogContent>
+              Shopping List is a Progressive Web App built using React and PouchDB.
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={() => this.setState({ aboutOpen: false })}>Close</Button>
+            </DialogActions>
+          </Dialog>
         </div>
-        {this.state.settingsOpen ? this.showSettingsDialog() : <span/>}
-        {this.state.aboutOpen ? this.showAboutDialog() : <span/>}
-        <FloatingActionButton 
-          onClick={this.displayAddingUI} 
-          mini={true}
-          style={{position: 'fixed', bottom:'25px', right:'25px'}}>
-          <ContentAdd />
-        </FloatingActionButton>
-      </div>
-      </MuiThemeProvider>
-    )
+      </ThemeProvider>
+    );
   }
 }
 
