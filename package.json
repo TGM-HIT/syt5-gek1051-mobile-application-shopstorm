@@ -24,12 +24,16 @@
 		"immutable": "^5.1.1",
 		"openssl-nodejs": "^1.0.5",
 		"pouchdb": "^9.0.0",
+		"pouchdb-all-dbs": "^1.1.1",
 		"pouchdb-find": "^9.0.0",
 		"prop-types": "^15.8.1"
 	},
 	"scripts": {
 		"start": "r3f-pack start",
-		"build": "r3f-pack build"
+		"build": "r3f-pack build",
+		"predeploy": "npm run build",
+		"deploy": "gh-pages -d build",
+		"cy:open": "cypress open"
 	},
 	"engines": {
 		"node": ">=18.20.8",

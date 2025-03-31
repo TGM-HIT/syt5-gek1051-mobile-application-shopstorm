@@ -15,3 +15,18 @@
 
 // Import commands.js using ES2015 syntax:
 import './commands'
+
+beforeEach(() => {
+    if ('databases' in indexedDB) {
+        indexedDB.databases().then((databases) => {
+            databases.forEach((dbInfo) => {
+            indexedDB.deleteDatabase(dbInfo.name);
+            console.log(`Deleted database: ${dbInfo.name}`);
+            });
+        });
+        } else {
+        console.warn("indexedDB.databases() is not supported in this browser.");
+        }  
+    }
+);
+  
