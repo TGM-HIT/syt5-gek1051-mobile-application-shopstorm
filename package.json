@@ -1,7 +1,7 @@
 {
 	"name": "shopping-list-react-pouchdb",
 	"version": "0.1.0",
-	"homepage": ".",
+	"homepage": "https://TGM-HIT.github.io/syt5-gek1051-mobile-application-shopstorm",
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/TGM-HIT/syt5-gek1051-mobile-application-shopstorm.git"
@@ -29,7 +29,9 @@
 	},
 	"scripts": {
 		"start": "r3f-pack start",
-		"build": "r3f-pack build"
+		"build": "r3f-pack build",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
 	},
 	"engines": {
 		"node": ">=18.20.8",
