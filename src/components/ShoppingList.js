@@ -112,7 +112,7 @@ class ShoppingList extends React.Component {
     return (
       <div>
         {items}
-        <Dialog open={open} onClose={this.handleClose}>
+        <Dialog open={open} onClose={this.handleClose} id={this._id}>
           {/* Dialog content */}
           <Dialog.Title>Rename Item</Dialog.Title>
           <Dialog.Content>
