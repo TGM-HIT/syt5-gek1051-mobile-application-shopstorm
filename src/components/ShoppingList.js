@@ -1,111 +1,134 @@
 import React from 'react';
-import {ListItem} from 'material-ui/List';
-import Divider from 'material-ui/Divider';
-import Checkbox from 'material-ui/Checkbox';
-import MenuItem from 'material-ui/MenuItem';
-import IconMenu from 'material-ui/IconMenu';
-import IconButton from 'material-ui/IconButton';
-import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
+import { ListItem, ListItemText, ListItemIcon } from '@mui/material';
+import Divider from '@mui/material/Divider';
+import Checkbox from '@mui/material/Checkbox';
+import MenuItem from '@mui/material/MenuItem';
+import Menu from '@mui/material/Menu';
+import IconButton from '@mui/material/IconButton';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import Dialog from '@mui/material/Dialog';
+import Button from '@mui/material/Button'; // FlatButton replaced with Button
+import TextField from '@mui/material/TextField';
 import './ShoppingList.css';
-import Dialog from 'material-ui/Dialog';
-import FlatButton from 'material-ui/FlatButton';
-import TextField from 'material-ui/TextField';
-
-const moveVertButton = (
-    <IconButton touch={true} tooltip="more" tooltipPosition="bottom-left">
-        <MoreVertIcon />
-    </IconButton>
-);
 
 class ShoppingList extends React.Component {
-  /* all state actions are for handling the renaming dialog */
   state = {
     open: false,
-    activeItemId: '', 
+    activeItemId: '',
     oldName: '',
-    newName: ''
+    newName: '',
+    anchorEl: null, // For handling menu
   };
 
-  handleOpen = (itemid, itemtitle) => {
-    this.setState({open: true, activeItemId: itemid, oldName: itemtitle});
+  handleOpen = (itemId, itemTitle) => {
+    this.setState({ open: true, activeItemId: itemId, oldName: itemTitle });
   };
 
   handleClose = () => {
-    this.setState({open: false});
+    this.setState({ open: false });
   };
 
-  handleSubmit = (e) => {
-    this.props.renameItemFunc(this.state.activeItemId, this.state.newName);
+  handleSubmit = () => {
+    const { activeItemId, newName } = this.state;
+
+    if (!activeItemId || typeof activeItemId !== 'string') {
+      console.error('Invalid _id:', activeItemId);
+      return;
+    }
+
+    this.props.renameItemFunc(activeItemId, newName);
     this.handleClose();
   };
 
   updateName = (e) => {
-    this.setState({newName: e.target.value});
-  }
+    this.setState({ newName: e.target.value });
+  };
 
-  /**
-   * Show the UI. The most important thing happening here is that the UI elements 
-   * make use of the functions passed into the component as props to do all the heavy 
-   * lifting of manipulating shopping list items, so this component is pure UI.
-   */
+  handleMenuOpen = (event) => {
+    this.setState({ anchorEl: event.currentTarget });
+  };
+
+  handleMenuClose = () => {
+    this.setState({ anchorEl: null });
+  };
+
   render() {
-    /* rename dialog stuff */
-    const actions = [
-      <FlatButton
-        label="Cancel"
-        primary={true}
-        onClick={this.handleClose}
-      />,
-      <FlatButton
-        label="Submit"
-        primary={true}
-        keyboardFocused={true}
-        onClick={this.handleSubmit}
-      />,
-    ];
-    /* end rename dialog stuff */
+    const { shoppingListItems, toggleItemCheckFunc, deleteFunc } = this.props;
+    const { open, oldName, anchorEl } = this.state;
 
-    let items = this.props.shoppingListItems.map( (item) => 
-      <div key={'listitem_'+item._id}>
-      <ListItem className='shoppinglistitem'
-        primaryText={
-            <span className={(item.checked ? 'checkeditem' : 'uncheckeditem')}>{item.title}</span>} 
-        leftCheckbox={
-          <Checkbox onCheck={this.props.toggleItemCheckFunc} data-item={item._id} data-id={item._id} checked={item.checked} />} 
-        rightIconButton={
-          <IconMenu iconButtonElement={moveVertButton} 
-            className="vertmenu-list">
-            <MenuItem 
-              primaryText="Rename"
-              onClick={()=>this.handleOpen(item._id, item.title)} />
-            <MenuItem 
-              primaryText="Delete" 
-              onClick={()=>this.props.deleteFunc(item._id)}/>
-          </IconMenu>
-        }>
-      </ListItem>
-      <Divider inset={true} />
-      </div>
+    const actions = (
+      <>
+        <Button onClick={this.handleClose} color="primary">
+          Cancel
+        </Button>
+        <Button onClick={this.handleSubmit} color="primary" variant="contained">
+          Submit
+        </Button>
+      </>
     );
-      
+
+    const items = shoppingListItems.map((item) => {
+      if (!item || !item._id || typeof item._id !== 'string') {
+        console.error('Invalid shopping list item:', item);
+        return null;
+      }
+
+      return (
+        <div key={`listitem_${item._id}`}>
+          <ListItem className="shoppinglistitem">
+            <ListItemIcon>
+              <Checkbox
+                checked={item.checked}
+                onChange={(e) => toggleItemCheckFunc(e)}
+                inputProps={{ 'data-id': item._id }}
+              />
+            </ListItemIcon>
+            <ListItemText
+              primary={
+                <span className={item.checked ? 'checkeditem' : 'uncheckeditem'}>
+                  {item.title}
+                </span>
+              }
+            />
+            <IconButton onClick={this.handleMenuOpen}>
+              <MoreVertIcon />
+            </IconButton>
+            <Menu
+              anchorEl={anchorEl}
+              open={Boolean(anchorEl)}
+              onClose={this.handleMenuClose}
+            >
+              <MenuItem onClick={() => this.handleOpen(item._id, item.title)}>
+                Rename
+              </MenuItem>
+              <MenuItem onClick={() => deleteFunc(item._id)}>Delete</MenuItem>
+            </Menu>
+          </ListItem>
+          <Divider />
+        </div>
+      );
+    });
+
     return (
       <div>
-        <div>{items}</div>
-        <Dialog
-          title="Rename Item"
-          actions={actions}
-          modal={false}
-          open={this.state.open}
-          onRequestClose={this.handleClose}>
-          {/* <form onSubmit={this.handleSubmit}> */}
-            <TextField className="form-control" type="text" id="textfield-item-rename"
-              defaultValue={this.state.oldName} 
-              onChange={this.updateName} 
-              fullWidth={true} />
-          {/* </form> */}
+        {items}
+        <Dialog open={open} onClose={this.handleClose}>
+          {/* Dialog content */}
+          <Dialog.Title>Rename Item</Dialog.Title>
+          <Dialog.Content>
+            <TextField
+              className="form-control"
+              type="text"
+              id="textfield-item-rename"
+              defaultValue={oldName}
+              onChange={this.updateName}
+              fullWidth
+            />
+          </Dialog.Content>
+          <Dialog.Actions>{actions}</Dialog.Actions>
         </Dialog>
       </div>
-    )
+    );
   }
 }
 
