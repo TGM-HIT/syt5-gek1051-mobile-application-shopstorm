@@ -33,7 +33,9 @@
 		"build": "r3f-pack build",
 		"predeploy": "npm run build",
 		"deploy": "gh-pages -d build",
-		"cy:open": "cypress open"
+		"cy:open": "cypress open",
+		"test:cypress": "npx cypress run",
+		"test:all": "npm-run-all -p start test:cypress"
 	},
 	"engines": {
 		"node": ">=18.20.8",
@@ -63,10 +65,12 @@
 		"cypress": "^14.2.1",
 		"gh-pages": "^6.3.0",
 		"html-webpack-plugin": "^5.6.3",
+		"npm-run-all": "^4.1.5",
 		"r3f-pack": "^3.1.0",
 		"react": "^19.1.0",
 		"react-dom": "^19.1.0",
 		"style-loader": "^4.0.0",
+		"wait-on": "^8.0.3",
 		"webpack": "^5.98.0",
 		"webpack-cli": "^6.0.1",
 		"webpack-dev-server": "^5.2.1"
