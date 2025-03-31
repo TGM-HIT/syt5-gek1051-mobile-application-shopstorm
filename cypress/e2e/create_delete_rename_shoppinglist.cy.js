@@ -30,6 +30,10 @@ describe('Rename ShoppingList', () => {
     cy.get('.MuiTextField-root').type("Meine Shoppingliste{enter}");
     cy.get('.MuiButtonBase-root').eq(2).click();
     cy.get('[role="menuitem"]').eq(1).click();
+    cy.get('.MuiInputBase-root').clear();
+    cy.get('.MuiInputBase-root').type("Neue Shoppingliste");
+    cy.get('button').contains('Submit').click();
+    cy.wait(2000)
   })
 })
 

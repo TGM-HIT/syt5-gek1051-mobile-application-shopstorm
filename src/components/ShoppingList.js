@@ -7,7 +7,10 @@ import Menu from '@mui/material/Menu';
 import IconButton from '@mui/material/IconButton';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Dialog from '@mui/material/Dialog';
-import Button from '@mui/material/Button'; // FlatButton replaced with Button
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
+import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import './ShoppingList.css';
 
@@ -114,8 +117,8 @@ class ShoppingList extends React.Component {
         {items}
         <Dialog open={open} onClose={this.handleClose} id={this._id}>
           {/* Dialog content */}
-          <Dialog.Title>Rename Item</Dialog.Title>
-          <Dialog.Content>
+          <DialogTitle>Rename Item</DialogTitle>
+          <DialogContent>
             <TextField
               className="form-control"
               type="text"
@@ -124,8 +127,8 @@ class ShoppingList extends React.Component {
               onChange={this.updateName}
               fullWidth
             />
-          </Dialog.Content>
-          <Dialog.Actions>{actions}</Dialog.Actions>
+          </DialogContent>
+          <DialogActions>{actions}</DialogActions>
         </Dialog>
       </div>
     );
