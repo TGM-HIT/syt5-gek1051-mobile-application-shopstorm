@@ -547,7 +547,7 @@ class App extends React.Component {
               <ShoppingLists
                 shoppingLists={this.state.shoppingLists}
                 openListFunc={this.openShoppingList}
-                deleteFunc={this.deleteShoppingList}
+                deleteListFunc={this.deleteShoppingList}
                 checkAllFunc={this.checkAllListItems}
               />
             ) : (
@@ -565,6 +565,7 @@ class App extends React.Component {
             size="small"
             sx={{ position: 'fixed', bottom: '25px', right: '25px' }}
             onClick={() => this.setState({ adding: true })}
+            id='add'
           >
             <AddIcon />
           </Fab>
