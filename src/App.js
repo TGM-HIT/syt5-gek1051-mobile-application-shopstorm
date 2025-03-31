@@ -244,24 +244,19 @@ class App extends React.Component {
    * @param {string} itemid id of an item
    * @param {string} newname new name of the item
    */
-  renameShoppingList = (listid, newname) => {
-    this.props.shoppingListRepository.get(listid)
-      .then(shoppingList => {
-        shoppingList = shoppingList.set('title', newname);
-        return this.props.shoppingListRepository.put(shoppingList);
-      })
-      .catch(err => {
-        if (err.status === 409) {
-          console.warn('Conflict detected while renaming list:', listid);
-          return this.props.localDB.get(listid, { conflicts: true }).then(conflictedDoc => {
-            this.resolveConflict(conflictedDoc); // Handle conflict
-          });
-        } else {
-          console.error('Error renaming shopping list:', err);
-        }
-      })
-    .finally(this.getShoppingLists);
-  };
+  renameShoppingListItem = (itemid, newname) => {
+    console.log('IN renameShoppingListItem with id='+itemid+', name='+newname);
+
+    if (!itemid || typeof itemid !== 'string') {
+      console.error('Invalid item ID:', itemId);
+      return;
+    }
+
+    this.props.shoppingListRepository.getItem(itemid).then(item => {
+      item = item.set('title', newname);
+      return this.props.shoppingListRepository.putItem(item);
+    }).then(this.refreshShoppingListItems(this.state.shoppingList._id));
+  }
 
 
   /**
@@ -348,6 +343,12 @@ class App extends React.Component {
    * @param {string} newname new name of the list
    */
   renameShoppingList = (listid, newname) => {
+
+    if (!listid || typeof listid !== 'string') {
+      console.error('Invalid list ID:', listId);
+      return;
+    }
+
     this.props.shoppingListRepository.get(listid).then(shoppingList => {
       shoppingList = shoppingList.set('title', newname);
       return this.props.shoppingListRepository.put(shoppingList);
@@ -425,13 +426,15 @@ class App extends React.Component {
       return ( <Card style={{margin:"12px 0"}}><CardHeader title={NOLISTMSG} /></Card> );
     return (
       <ShoppingLists 
-        shoppingLists={this.state.shoppingLists}
-        openListFunc={this.openShoppingList} 
-        deleteListFunc={this.deleteShoppingList} 
-        renameListFunc={this.renameShoppingList} 
-        checkAllFunc={this.checkAllListItems} 
-        totalCounts={this.state.totalShoppingListItemCount}
-        checkedCounts={this.state.checkedTotalShoppingListItemCount} /> 
+      shoppingLists={this.state.shoppingLists}
+      openListFunc={this.openShoppingList} 
+      deleteListFunc={this.deleteShoppingList} 
+      renameListFunc={this.renameShoppingList} 
+      checkAllFunc={this.checkAllListItems} 
+      totalCounts={this.state.totalShoppingListItemCount}
+      checkedCounts={this.state.checkedTotalShoppingListItemCount}
+    />
+
     )
   }
 
@@ -446,7 +449,8 @@ class App extends React.Component {
         shoppingListItems={this.state.shoppingListItems} 
         deleteFunc={this.deleteShoppingListItem} 
         toggleItemCheckFunc={this.toggleItemCheck} 
-        renameItemFunc={this.renameShoppingListItem} /> 
+        renameItemFunc={this.renameShoppingListItem}
+      />
     )
   }
 
@@ -544,17 +548,21 @@ class App extends React.Component {
           <div className="listsanditems" style={{ margin: '8px' }}>
             {adding && this.renderNewNameUI()}
             {view === 'lists' ? (
-              <ShoppingLists
+              <ShoppingLists 
                 shoppingLists={this.state.shoppingLists}
-                openListFunc={this.openShoppingList}
-                deleteListFunc={this.deleteShoppingList}
-                checkAllFunc={this.checkAllListItems}
-              />
+                openListFunc={this.openShoppingList} 
+                deleteListFunc={this.deleteShoppingList} 
+                renameListFunc={this.renameShoppingList} 
+                checkAllFunc={this.checkAllListItems} 
+                totalCounts={this.state.totalShoppingListItemCount}
+                checkedCounts={this.state.checkedTotalShoppingListItemCount}
+              />            
             ) : (
-              <ShoppingList
-                shoppingListItems={this.state.shoppingListItems}
-                deleteFunc={this.deleteShoppingListItem}
+              <ShoppingList 
+                shoppingListItems={this.state.shoppingListItems} 
+                deleteFunc={this.deleteShoppingListItem} 
                 toggleItemCheckFunc={this.toggleItemCheck} 
+                renameItemFunc={this.renameShoppingListItem}
               />
             )}
           </div>
