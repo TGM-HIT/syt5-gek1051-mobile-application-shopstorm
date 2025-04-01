@@ -63,6 +63,10 @@ class App extends React.Component {
 
     const savedThemeMode = localStorage.getItem('themeMode') || 'light';
 
+    if (savedThemeMode === 'dark') {
+      enableDarkMode();
+    }
+
     this.state = {
       shoppingList: null, 
       shoppingLists: [], 
