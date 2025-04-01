@@ -8,7 +8,7 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, 'build'), // Output directory
     filename: 'bundle.js', // Output bundle file name
-    publicPath: '/', // Public path for assets
+    publicPath: '/syt5-gek1051-mobile-application-shopstorm/'
   },
   devServer: {
     static: path.join(__dirname, 'public'), // Replace contentBase with static
