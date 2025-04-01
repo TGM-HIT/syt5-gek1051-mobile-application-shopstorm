@@ -6,8 +6,8 @@ module.exports = {
   mode: 'development', // Change to 'production' for production builds
   entry: './src/index.js', // Entry point of your application
   output: {
-    path: path.resolve(__dirname, 'build'), // Output directory
-    filename: 'bundle.js', // Output bundle file name
+    path: path.resolve(__dirname, 'build'),
+    filename: '[name].[contenthash].js',
     publicPath: '/syt5-gek1051-mobile-application-shopstorm/'
   },
   devServer: {
