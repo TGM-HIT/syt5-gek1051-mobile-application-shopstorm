@@ -20,6 +20,9 @@ import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
 import SettingsIcon from '@mui/icons-material/Settings';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { grey, blueGrey, pink } from '@mui/material/colors';
+import { enable as enableDarkMode, disable as disableDarkMode } from 'darkreader';
+import Brightness4Icon from '@mui/icons-material/Brightness4'; // Dark mode icon
+import Brightness7Icon from '@mui/icons-material/Brightness7'; // Light mode icon
 
 import PouchDB from 'pouchdb';
 
@@ -58,6 +61,11 @@ class App extends React.Component {
       this.remoteDB = props.remoteDB;
     }
 
+    const savedThemeMode = localStorage.getItem('themeMode') || 'light';
+
+    if (savedThemeMode === 'dark') {
+      enableDarkMode();
+    }
 
     this.state = {
       shoppingList: null, 
@@ -69,7 +77,8 @@ class App extends React.Component {
       view: 'lists',
       newName: '',
       settingsOpen: false,
-      aboutOpen: false
+      aboutOpen: false,
+      themeMode: savedThemeMode,
     }
   }
 
@@ -84,6 +93,17 @@ class App extends React.Component {
         this.syncToRemote();
       }
   }
+
+  toggleThemeMode = () => {
+    const newMode = this.state.themeMode === 'light' ? 'dark' : 'light';
+    this.setState({ themeMode: newMode });
+    localStorage.setItem('themeMode', newMode); // Save preference
+    if (newMode === 'light') {
+      disableDarkMode();
+    } else {
+      enableDarkMode();
+    }
+  };
 
   checkAllListItems = (listId) => {
     const { shoppingListItems } = this.state;
@@ -553,6 +573,10 @@ class App extends React.Component {
 
   renderActionButtons = () => (
     <>
+      <IconButton onClick={this.toggleThemeMode} color="inherit">
+        {this.state.themeMode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
+      </IconButton>
+      
       <IconButton onClick={() => this.setState({ settingsOpen: true })}>
         <SettingsIcon />
       </IconButton>
