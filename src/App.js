@@ -134,6 +134,8 @@ class App extends React.Component {
       if (doc._conflicts && doc._conflicts.length > 0) {
         console.log('Conflicts detected for document:', doc._id);
         this.resolveConflict(doc);
+      } else {
+        
       }
     });
   };
