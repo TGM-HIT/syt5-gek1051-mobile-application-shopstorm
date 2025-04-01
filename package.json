@@ -32,8 +32,8 @@
 		"prop-types": "^15.8.1"
 	},
 	"scripts": {
-		"start": "r3f-pack start",
-		"build": "r3f-pack build",
+		"start": "cross-env WEBPACK_CLI_SKIP_IMPORT_LOCAL=true r3f-pack start",
+    "build": "cross-env WEBPACK_CLI_SKIP_IMPORT_LOCAL=true r3f-pack build",
 		"predeploy": "npm run build",
 		"deploy": "gh-pages -d build",
 		"cy:open": "cypress open",
