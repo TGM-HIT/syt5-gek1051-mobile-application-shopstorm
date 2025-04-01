@@ -174,7 +174,7 @@ const ShoppingLists = (props) => {
 
   // Handle drag start
   const handleDragStart = (event) => {
-    setActiveId(event.active.id);
+    setActiveId(event.active.id);  
   };
 
   const handleDragEnd = (event) => {
@@ -215,13 +215,14 @@ const ShoppingLists = (props) => {
     <DndContext
       sensors={sensors}
       collisionDetection={closestCenter}
+      onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
       <SortableContext 
         items={shoppingLists.map(list => list._id)} 
         strategy={verticalListSortingStrategy}
       >
-        {items.map((list) => {
+        {items.map((list, index) => {
           if (!list || !list._id) return null;
           
           return (
