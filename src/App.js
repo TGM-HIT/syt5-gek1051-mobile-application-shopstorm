@@ -164,29 +164,102 @@ class App extends React.Component {
     let checkedCount = List();
     let totalCount = List();
     let lists = null;
-    this.props.shoppingListRepository
+    
+    return this.props.shoppingListRepository
       .find()
       .then((foundLists) => {
-        lists = foundLists;
-        return foundLists;
+          lists = foundLists.sort((a, b) => {
+              const savedOrder = JSON.parse(localStorage.getItem('shoppingListOrder') || '[]');
+              
+              // Get index from saved order, or fall back to natural ordering
+              const getOrder = (list) => {
+                  const index = savedOrder.indexOf(list._id);
+                  return index === -1 ? Infinity : index;
+              };
+              
+              return getOrder(a) - getOrder(b);
+          });
+          
+          return foundLists;
       })
       .then(() => this.props.shoppingListRepository.findItemsCountByList())
       .then((countsList) => {
-        totalCount = countsList;
-        return this.props.shoppingListRepository.findItemsCountByList({
-          selector: { type: 'item', checked: true },
-          fields: ['list'],
-        });
+          totalCount = countsList;
+          return this.props.shoppingListRepository.findItemsCountByList({
+              selector: { type: 'item', checked: true },
+              fields: ['list'],
+          });
       })
       .then((checkedList) => {
-        checkedCount = checkedList;
-        this.setState({
-          view: 'lists',
-          shoppingLists: lists,
-          shoppingListItems: null,
-          checkedTotalShoppingListItemCount: checkedCount,
-          totalShoppingListItemCount: totalCount,
+          checkedCount = checkedList;
+          this.setState({
+              view: 'lists',
+              shoppingLists: lists,
+              shoppingListItems: null,
+              checkedTotalShoppingListItemCount: checkedCount,
+              totalShoppingListItemCount: totalCount,
+          });
+      });
+  };
+
+  /**
+   * Update the order of shopping lists
+   * @param {Array} reorderedLists The new order of shopping lists
+   */
+  updateListOrder = (reorderedLists) => {
+    // Validate reorderedLists array
+    if (!Array.isArray(reorderedLists) || reorderedLists.length === 0) {
+      console.error('Invalid list array for reordering');
+      return;
+    }
+  
+    // Filter out any invalid list items (those without a valid _id)
+    const validLists = reorderedLists.filter(list => {
+      return list && list._id && typeof list._id === 'string' && list._id.startsWith('list:');
+    });
+    
+    // Create a map of list IDs to their new positions
+    const orderMap = new Map();
+    validLists.forEach((list, index) => {
+      orderMap.set(list._id, index);
+    });
+  
+    // Log for debugging
+    console.log('Updating list order for:', validLists.map(list => list._id));
+  
+    // Update each list with its new order value
+    const updatePromises = validLists.map((list) => {
+      const listId = list._id;
+      
+      // Additional validation for list ID format
+      if (!listId || typeof listId !== 'string' || !listId.startsWith('list:')) {
+        console.warn(`Skipping list with invalid ID format: ${listId}`);
+        return Promise.resolve();
+      }
+      
+      return this.props.shoppingListRepository.get(listId)
+        .then(shoppingList => {
+          if (!shoppingList) {
+            console.warn(`List with ID ${listId} not found`);
+            return Promise.resolve();
+          }
+          shoppingList = shoppingList.set('order', orderMap.get(listId));
+          return this.props.shoppingListRepository.put(shoppingList);
+        })
+        .catch(err => {
+          console.error(`Error updating order for list ${listId}:`, err);
+          return Promise.resolve(); // Continue with other updates even if one fails
         });
+    });
+  
+    // After all updates are complete, refresh the lists
+    Promise.all(updatePromises)
+      .then(() => {
+        this.getShoppingLists();
+      })
+      .catch(err => {
+        console.error('Error updating list order:', err);
+        this.getShoppingLists(); // Refresh lists anyway to maintain UI consistency
       });
   };
 
@@ -206,6 +279,10 @@ class App extends React.Component {
         });
       });
     });
+  }
+
+  setLists = (lists) => {
+    this.setState({shoppingLists: lists});
   }
 
   /**
@@ -362,14 +439,20 @@ class App extends React.Component {
   createNewShoppingListOrItem = (e) => {
     e.preventDefault();
     const { newName, view, shoppingList } = this.state;
-
+  
     if (!newName.trim()) return;
-
+  
     this.setState({ adding: false, newName: '' });
-
+  
     if (view === 'lists') {
+      // Find the highest order number currently in use
+      const maxOrder = this.state.shoppingLists.reduce((max, list) => {
+        return list.order !== undefined && list.order > max ? list.order : max;
+      }, -1);
+      
       const newShoppingList = this.props.shoppingListFactory.newShoppingList({
         title: newName.trim(),
+        order: maxOrder + 1, // Set new list to appear at the end
       });
       this.props.shoppingListRepository.put(newShoppingList).then(this.getShoppingLists);
     } else if (view === 'items') {
@@ -433,6 +516,8 @@ class App extends React.Component {
       checkAllFunc={this.checkAllListItems} 
       totalCounts={this.state.totalShoppingListItemCount}
       checkedCounts={this.state.checkedTotalShoppingListItemCount}
+      updateListOrder={this.updateListOrder}
+      setListsFunc={this.setLists}
     />
 
     )
@@ -556,6 +641,8 @@ class App extends React.Component {
                 checkAllFunc={this.checkAllListItems} 
                 totalCounts={this.state.totalShoppingListItemCount}
                 checkedCounts={this.state.checkedTotalShoppingListItemCount}
+                updateListOrder={this.updateListOrder}
+                setListsFunc={this.setLists}
               />            
             ) : (
               <ShoppingList 
