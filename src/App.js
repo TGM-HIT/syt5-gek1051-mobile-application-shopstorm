@@ -26,7 +26,6 @@ import PouchDB from 'pouchdb';
 import ShoppingLists from './components/ShoppingLists';
 import ShoppingList from './components/ShoppingList';
 
-// create a custom color scheme for Material-UI
 const muiTheme = createTheme({
   palette: {
     textColor: grey,
@@ -34,18 +33,13 @@ const muiTheme = createTheme({
     accent1Color: blueGrey
   }
 });
-
 const appBarStyle = {
   backgroundColor: blueGrey,
   width: "100%",
 };
+const NOLISTMSG = "Click the + sign below to create a shopping list.";
+const NOITEMSMSG = "Click the + sign below to create a shopping list item.";
 
-const NOLISTMSG = "Click the + sign below to create a shopping list."
-const NOITEMSMSG = "Click the + sign below to create a shopping list item."
-
-/** 
- * This is the main React application
- */
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -58,32 +52,26 @@ class App extends React.Component {
       this.remoteDB = props.remoteDB;
     }
 
-
     this.state = {
       shoppingList: null,
       shoppingLists: [],
-      totalShoppingListItemCount: List(), //Immutable.js List with list ids as keys
-      checkedTotalShoppingListItemCount: List(), //Immutable.js List with list ids as keys
+      totalShoppingListItemCount: List(),
+      checkedTotalShoppingListItemCount: List(),
       shoppingListItems: null,
       adding: false,
       view: 'lists',
       newName: '',
       settingsOpen: false,
       aboutOpen: false
-    }
+    };
   }
 
-  /**
-   * Before this component shows the user anything, get the data from the local PouchDB
-   * 
-   * Then, if we were initialized with a remote DB, synchronize with it
-   */
   componentDidMount = () => {
     this.getShoppingLists();
     if (this.remoteDB) {
       this.syncToRemote();
     }
-  }
+  };
 
   checkAllListItems = (listId) => {
     const { shoppingListItems } = this.state;
@@ -112,14 +100,9 @@ class App extends React.Component {
       .catch((err) => console.error("Error toggling item:", err));
   };
 
-  /**
-   * Synchronize local PouchDB with a remote CouchDB or Cloudant
-   */
-
   syncToRemote = () => {
     this.props.localDB.sync(this.remoteDB, { live: true, retry: true })
       .on('change', change => {
-        console.log('Change detected during sync:', change);
         if (change.direction === 'pull') {
           this.handleConflicts(change.change.docs);
         }
@@ -128,11 +111,9 @@ class App extends React.Component {
       .on('error', err => console.error('Error during sync:', err));
   };
 
-
   handleConflicts = (docs) => {
     docs.forEach(doc => {
       if (doc._conflicts && doc._conflicts.length > 0) {
-        console.log('Conflicts detected for document:', doc._id);
         this.resolveConflict(doc);
       }
     });
@@ -141,45 +122,30 @@ class App extends React.Component {
   resolveConflict = (doc) => {
     this.props.localDB.get(doc._id, { conflicts: true })
       .then(conflictedDoc => {
-        console.log('Resolving conflicts for:', conflictedDoc);
-
         const losingRevisions = conflictedDoc._conflicts;
-
         const deletePromises = losingRevisions.map(rev =>
           this.props.localDB.remove(conflictedDoc._id, rev)
         );
-
-        return Promise.all(deletePromises).then(() => {
-          console.log(`Resolved conflicts for document: ${conflictedDoc._id}`);
-          this.getShoppingLists();
-        });
+        return Promise.all(deletePromises).then(() => this.getShoppingLists());
       })
       .catch(err => console.error('Error resolving conflict:', err));
   };
 
-  /**
-   * From the local DB, load all the shopping lists and item counts and which are checked
-   */
   getShoppingLists = () => {
     let checkedCount = List();
     let totalCount = List();
     let lists = null;
 
-    return this.props.shoppingListRepository
-      .find()
+    return this.props.shoppingListRepository.find()
       .then((foundLists) => {
         lists = foundLists.sort((a, b) => {
           const savedOrder = JSON.parse(localStorage.getItem('shoppingListOrder') || '[]');
-
-          // Get index from saved order, or fall back to natural ordering
           const getOrder = (list) => {
             const index = savedOrder.indexOf(list._id);
             return index === -1 ? Infinity : index;
           };
-
           return getOrder(a) - getOrder(b);
         });
-
         return foundLists;
       })
       .then(() => this.props.shoppingListRepository.findItemsCountByList())
@@ -202,12 +168,8 @@ class App extends React.Component {
       });
   };
 
-  /**
-   * Update the order of shopping lists
-   * @param {Array} reorderedLists The new order of shopping lists
-   */
   updateListOrder = (reorderedLists) => {
-    // Validate reorderedLists array
+
     if (!Array.isArray(reorderedLists) || reorderedLists.length === 0) {
       console.error('Invalid list array for reordering');
       return;
@@ -217,17 +179,9 @@ class App extends React.Component {
     const validLists = reorderedLists.filter(list => {
       return list && list._id && typeof list._id === 'string' && list._id.startsWith('list:');
     });
-
-    // Create a map of list IDs to their new positions
     const orderMap = new Map();
-    validLists.forEach((list, index) => {
-      orderMap.set(list._id, index);
-    });
+    validLists.forEach((list, index) => orderMap.set(list._id, index));
 
-    // Log for debugging
-    console.log('Updating list order for:', validLists.map(list => list._id));
-
-    // Update each list with its new order value
     const updatePromises = validLists.map((list) => {
       const listId = list._id;
 
@@ -236,41 +190,19 @@ class App extends React.Component {
         console.warn(`Skipping list with invalid ID format: ${listId}`);
         return Promise.resolve();
       }
-
-      return this.props.shoppingListRepository.get(listId)
+      return this.props.shoppingListRepository.get(list._id)
         .then(shoppingList => {
-          if (!shoppingList) {
-            console.warn(`List with ID ${listId} not found`);
-            return Promise.resolve();
-          }
-          shoppingList = shoppingList.set('order', orderMap.get(listId));
+          shoppingList = shoppingList.set('order', orderMap.get(list._id));
           return this.props.shoppingListRepository.put(shoppingList);
         })
-        .catch(err => {
-          console.error(`Error updating order for list ${listId}:`, err);
-          return Promise.resolve(); // Continue with other updates even if one fails
-        });
+        .catch(err => console.error(`Error updating order for list ${list._id}:`, err));
     });
 
-    // After all updates are complete, refresh the lists
-    Promise.all(updatePromises)
-      .then(() => {
-        this.getShoppingLists();
-      })
-      .catch(err => {
-        console.error('Error updating list order:', err);
-        this.getShoppingLists(); // Refresh lists anyway to maintain UI consistency
-      });
+    Promise.all(updatePromises).then(() => this.getShoppingLists());
   };
 
-  /**
-   * Get a shopping list by id 
-   * @param {string} listid id of a shopping list
-   */
   openShoppingList = (listid) => {
     this.props.shoppingListRepository.get(listid).then(list => {
-      return list;
-    }).then(list => {
       this.getShoppingListItems(listid).then(items => {
         this.setState({
           view: 'items',
@@ -279,103 +211,57 @@ class App extends React.Component {
         });
       });
     });
-  }
+  };
 
   setLists = (lists) => {
     this.setState({ shoppingLists: lists });
   }
-
-  /**
-   * Get the items in a shopping list
-   * @param {string} listid id of a shopping list
-   */
   getShoppingListItems = (listid) => {
     return this.props.shoppingListRepository.findItems({
-      selector: {
-        type: 'item',
-        list: listid
-      }
+      selector: { type: 'item', list: listid }
     });
-  }
+  };
 
-  /**
-   * Refresh the items in a shopping list
-   * @param {string} listid id of a shopping list
-   */
   refreshShoppingListItems = (listid) => {
     this.props.shoppingListRepository.findItems({
       selector: { type: 'item', list: listid }
-    }).then(items => {
-      this.setState({
-        shoppingListItems: items // Immutable.js-Liste wird korrekt aktualisiert
-      });
-    });
-  }
+    }).then(items => this.setState({ shoppingListItems: items }));
+  };
 
-  /**
-   * Change the name of an item
-   * @param {string} itemid id of an item
-   * @param {string} newname new name of the item
-   */
   renameShoppingListItem = (itemid, newname, selectedTag) => {
-    console.log('IN renameShoppingListItem with id=' + itemid + ', name=' + newname + ', tag=' + selectedTag);
     if (!itemid || typeof itemid !== 'string') {
       console.error('Invalid item ID:', itemid);
       return;
     }
-    
+
     return this.props.shoppingListRepository.getItem(itemid)
       .then(item => {
-        // Aktualisiere zuerst den Tag
-        item = item.set('tag', selectedTag);
-        // Dann den Namen
-        item = item.set('title', newname);
+        const combinedTitle = `${newname}$${selectedTag}`;
+        item = item.set('title', combinedTitle);
         return this.props.shoppingListRepository.putItem(item);
       })
-      .then(() => {
-        console.log('Item erfolgreich aktualisiert');
-        // Aktualisiere die Liste mit der neuesten Version
-        return this.refreshShoppingListItems(this.state.shoppingList._id);
-      })
-      .then(() => this.forceUpdate())
-      .catch(err => {
-        console.error('Error updating item:', err);
-        alert('Fehler beim Speichern des Tags');
-      });
+      .then(() => this.refreshShoppingListItems(this.state.shoppingList._id))
+      .catch(err => console.error('Error updating item:', err));
   };
 
-  /**
-   * Delete an item
-   * @param {string} itemid id of an item
-   */
   deleteShoppingListItem = (itemid) => {
-    this.props.shoppingListRepository.getItem(itemid).then(item => {
-      return this.props.shoppingListRepository.deleteItem(item);
-    }).then(this.refreshShoppingListItems(this.state.shoppingList._id));
-  }
+    this.props.shoppingListRepository.getItem(itemid)
+      .then(item => this.props.shoppingListRepository.deleteItem(item))
+      .then(() => this.refreshShoppingListItems(this.state.shoppingList._id));
+  };
 
-  /**
-   * Check off or un-check an item
-   * @param {event} evt The click event on the UI element requesting to toggle state. It's id is the item id
-   */
   toggleItemCheck = (evt) => {
     const itemid = evt.target.dataset.id;
-
-    // Validate that itemid exists and is a string
-    if (!itemid || typeof itemid !== 'string') {
-      console.error('Invalid _id:', itemid);
-      return;
-    }
+    if (!itemid) return;
 
     this.props.shoppingListRepository.getItem(itemid)
-      .then((item) => {
-        // Toggle the 'checked' state of the item
+      .then(item => {
         item = item.set('checked', !item.checked);
         return this.props.shoppingListRepository.putItem(item);
       })
       .then(() => this.refreshShoppingListItems(this.state.shoppingList._id))
-      .catch((err) => console.error('Error toggling item check:', err));
-  }
+      .catch(err => console.error('Error toggling item check:', err));
+  };
 
   /**
    * Check off all items in the shopping list
@@ -429,20 +315,16 @@ class App extends React.Component {
   createNewShoppingListOrItem = (e) => {
     e.preventDefault();
     const { newName, view, shoppingList } = this.state;
-
     if (!newName.trim()) return;
 
     this.setState({ adding: false, newName: '' });
 
     if (view === 'lists') {
-      // Find the highest order number currently in use
-      const maxOrder = this.state.shoppingLists.reduce((max, list) => {
-        return list.order !== undefined && list.order > max ? list.order : max;
-      }, -1);
-
+      const maxOrder = this.state.shoppingLists.reduce((max, list) => 
+        Math.max(max, list.order !== undefined ? list.order : -1), -1);
       const newShoppingList = this.props.shoppingListFactory.newShoppingList({
         title: newName.trim(),
-        order: maxOrder + 1, // Set new list to appear at the end
+        order: maxOrder + 1,
       });
       this.props.shoppingListRepository.put(newShoppingList).then(this.getShoppingLists);
     } else if (view === 'items') {
@@ -450,32 +332,20 @@ class App extends React.Component {
         { title: newName.trim() },
         shoppingList
       );
-      this.props.shoppingListRepository.putItem(newItem).then(() => {
-        this.getShoppingListItems(shoppingList._id).then((items) => {
-          this.setState({ shoppingListItems: items });
-        });
-      });
+      this.props.shoppingListRepository.putItem(newItem)
+        .then(() => this.getShoppingListItems(shoppingList._id))
+        .then(items => this.setState({ shoppingListItems: items }));
     }
   };
 
-  /**
-   * Set the new name the user has typed in state for pickup later by other functions
-   * @param {event} evt The change event on the UI element that let's user type a name
-   */
-  updateName = (e) => {
-    this.setState({ newName: e.target.value });
-  };
+  updateName = (e) => this.setState({ newName: e.target.value });
 
-  /**
+   /**
    * Tell the component we're in adding list or item mode
    */
-  displayAddingUI = () => {
+   displayAddingUI = () => {
     this.setState({ adding: true });
   }
-
-  /**
-   * Show UI for typing in a new name
-   */
   renderNewNameUI = () => (
     <form onSubmit={this.createNewShoppingListOrItem} style={{ marginTop: '12px' }}>
       <Paper>
@@ -555,10 +425,10 @@ class App extends React.Component {
     </>
   );
 
-  /**
+   /**
    * Tell component we want to show settings dialog
    */
-  handleOpenSettings = () => {
+   handleOpenSettings = () => {
     this.setState({ settingsOpen: true });
   }
 
@@ -613,7 +483,6 @@ class App extends React.Component {
     return (
       <ThemeProvider theme={muiTheme}>
         <div className="App">
-          {/* AppBar */}
           <AppBar position="static" sx={{ backgroundColor: blueGrey[500] }}>
             <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
               {view === 'items' ? this.renderBackButton() : <Typography variant="h6">Logo</Typography>}
@@ -624,7 +493,6 @@ class App extends React.Component {
             </Toolbar>
           </AppBar>
 
-          {/* Main Content */}
           <div className="listsanditems" style={{ margin: '8px' }}>
             {adding && this.renderNewNameUI()}
             {view === 'lists' ? (
@@ -632,12 +500,10 @@ class App extends React.Component {
                 shoppingLists={this.state.shoppingLists}
                 openListFunc={this.openShoppingList}
                 deleteListFunc={this.deleteShoppingList}
-                renameListFunc={this.renameShoppingList}
                 checkAllFunc={this.checkAllListItems}
                 totalCounts={this.state.totalShoppingListItemCount}
                 checkedCounts={this.state.checkedTotalShoppingListItemCount}
                 updateListOrder={this.updateListOrder}
-                setListsFunc={this.setLists}
               />
             ) : (
               <ShoppingList
@@ -649,13 +515,11 @@ class App extends React.Component {
             )}
           </div>
 
-          {/* Floating Action Button */}
           <Fab
             color="primary"
             size="small"
             sx={{ position: 'fixed', bottom: '25px', right: '25px' }}
             onClick={() => this.setState({ adding: true })}
-            id='add'
           >
             <AddIcon />
           </Fab>

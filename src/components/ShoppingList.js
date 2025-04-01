@@ -36,13 +36,14 @@ class ShoppingList extends React.Component {
     selectedTag: ''
   };
 
-  handleOpen = (itemId, itemTitle, itemTag) => {
-    console.log("Dialog opened with tag:", itemTag); // Debugging
+  handleOpen = (itemId, itemTitle) => {
+    const [name = '', tag = ''] = itemTitle.split('$');
     this.setState({
       open: true,
       activeItemId: itemId,
-      oldName: itemTitle,
-      selectedTag: itemTag || '' // Initialisiere mit vorhandenem Tag
+      oldName: name,
+      newName: name,
+      selectedTag: tag
     });
   };
 
@@ -52,23 +53,9 @@ class ShoppingList extends React.Component {
 
   handleSubmit = () => {
     const { activeItemId, newName, selectedTag } = this.state;
-    if (!activeItemId || typeof activeItemId !== 'string') {
-      console.error('Invalid _id:', activeItemId);
-      return;
-    }
-
     this.props.renameItemFunc(activeItemId, newName, selectedTag)
-      .then(() => {
-        this.setState({
-          open: false,
-          selectedTag: '',
-          newName: ''
-        });
-      })
-      .catch(err => {
-        console.error('Error updating item:', err);
-        alert('Fehler beim Speichern des Tags');
-      });
+      .then(this.handleClose)
+      .catch(err => console.error('Error updating item:', err));
   };
 
   updateName = (e) => {
@@ -89,106 +76,79 @@ class ShoppingList extends React.Component {
 
   render() {
     const { shoppingListItems, toggleItemCheckFunc, deleteFunc } = this.props;
-    const { open, oldName, anchorEl } = this.state;
-
-    const actions = (
-      <>
-        <Button onClick={this.handleClose} color="primary">
-          Cancel
-        </Button>
-        <Button onClick={this.handleSubmit} color="primary" variant="contained">
-          Submit
-        </Button>
-      </>
-    );
-
-    const items = shoppingListItems.map((item) => {
-      if (!item || !item._id || typeof item._id !== 'string') {
-        console.error('Invalid shopping list item:', item);
-        return null;
-      }
-
-      // Berechne den Tagname innerhalb der map-Funktion
-      const tagValue = item.get('tag') || ''; // Falls `tag` undefined ist, wird es zu einem leeren String
-      const tagName = AVAILABLE_TAGS.find(tag => tag.id === tagValue)?.label || 'Kein Tag';
-
-      console.log(item.get('tag')?.toString())
-      return (
-        <div key={`listitem_${item._id}`}>
-          <ListItem className="shoppinglistitem">
-            <ListItemIcon>
-              <Checkbox
-                checked={item.checked}
-                onChange={(e) => toggleItemCheckFunc(e)}
-                inputProps={{ 'data-id': item._id }}
-              />
-            </ListItemIcon>
-            <ListItemText
-              primary={
-                <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                  <span style={{ fontWeight: '500' }}>{item.title}</span>
-                  <span style={{
-                    backgroundColor: '#f5f5f5',
-                    padding: '2px 8px',
-                    borderRadius: '4px',
-                    fontSize: '0.875rem'
-                  }}>
-                    {tagName}
-                  </span>
-                </div>
-              }
-            />
-            <IconButton onClick={this.handleMenuOpen}>
-              <MoreVertIcon />
-            </IconButton>
-            <Menu
-              anchorEl={anchorEl}
-              open={Boolean(anchorEl)}
-              onClose={this.handleMenuClose}
-            >
-              <MenuItem onClick={() => this.handleOpen(item._id, item.get('title'), item.get('tag'))}>
-                Rename
-              </MenuItem>
-              <MenuItem onClick={() => deleteFunc(item._id)}>
-                Delete
-              </MenuItem>
-            </Menu>
-            <Divider />
-          </ListItem>
-        </div>
-      );
-    });
+    const { open, anchorEl, newName, selectedTag } = this.state;
 
     return (
       <div>
-        {items}
-        <Dialog open={open} onClose={this.handleClose} id={this._id}>
+        {shoppingListItems.map((item) => {
+          const [name = '', tag = ''] = item.title.split('$');
+          const tagName = AVAILABLE_TAGS.find(t => t.id === tag)?.label || 'Kein Tag';
+
+          return (
+            <div key={item._id}>
+              <ListItem className="shoppinglistitem">
+                <ListItemIcon>
+                  <Checkbox
+                    checked={item.checked}
+                    onChange={(e) => toggleItemCheckFunc(e)}
+                    inputProps={{ 'data-id': item._id }}
+                  />
+                </ListItemIcon>
+                <ListItemText
+                  primary={
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                      <span style={{ fontWeight: '500' }}>{name}</span>
+                      <span style={{
+                        backgroundColor: '#f5f5f5',
+                        padding: '2px 8px',
+                        borderRadius: '4px',
+                        fontSize: '0.875rem'
+                      }}>
+                        {tagName}
+                      </span>
+                    </div>
+                  }
+                />
+                <IconButton onClick={this.handleMenuOpen}>
+                  <MoreVertIcon />
+                </IconButton>
+                <Menu
+                  anchorEl={anchorEl}
+                  open={Boolean(anchorEl)}
+                  onClose={this.handleMenuClose}
+                >
+                  <MenuItem onClick={() => this.handleOpen(item._id, item.title)}>
+                    Umbenennen
+                  </MenuItem>
+                  <MenuItem onClick={() => deleteFunc(item._id)}>
+                    Löschen
+                  </MenuItem>
+                </Menu>
+              </ListItem>
+              <Divider />
+            </div>
+          );
+        })}
+
+        <Dialog open={open} onClose={this.handleClose}>
           <DialogTitle>Artikel bearbeiten</DialogTitle>
           <DialogContent>
             <TextField
-              className="form-control"
-              type="text"
-              id="textfield-item-rename"
-              defaultValue={oldName}
-              onChange={this.updateName}
               fullWidth
               label="Artikelname"
+              value={newName}
+              onChange={this.updateName}
+              sx={{ mb: 2 }}
             />
-
-            {/* Neues Select für Tags */}
-            <FormControl fullWidth style={{ marginTop: '16px' }}>
-              <InputLabel id="tag-select-label">Tag auswählen</InputLabel>
+            
+            <FormControl fullWidth>
+              <InputLabel>Kategorie</InputLabel>
               <Select
-                labelId="tag-select-label"
-                id="tag-select"
-                value={this.state.selectedTag}
+                value={selectedTag}
                 onChange={this.handleTagChange}
-                label="Tag"
+                label="Kategorie"
               >
-                <MenuItem value="">
-                  <em>Kein Tag ausgewählt</em>
-                </MenuItem>
-                {AVAILABLE_TAGS.map(tag => (
+                {AVAILABLE_TAGS.map((tag) => (
                   <MenuItem key={tag.id} value={tag.id}>
                     {tag.label}
                   </MenuItem>
@@ -196,7 +156,12 @@ class ShoppingList extends React.Component {
               </Select>
             </FormControl>
           </DialogContent>
-          <DialogActions>{actions}</DialogActions>
+          <DialogActions>
+            <Button onClick={this.handleClose}>Abbrechen</Button>
+            <Button onClick={this.handleSubmit} color="primary">
+              Speichern
+            </Button>
+          </DialogActions>
         </Dialog>
       </div>
     );
