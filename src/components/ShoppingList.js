@@ -12,7 +12,19 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
+import { FormControl, InputLabel, Select } from '@mui/material';
 import './ShoppingList.css';
+
+const AVAILABLE_TAGS = [
+  { id: 'fruits_vegetables', label: 'Obst & Gemüse' },
+  { id: 'fresh_counter', label: 'Frischetheke' },
+  { id: 'dairy_cooling', label: 'Molkerei & Kühlprodukte' },
+  { id: 'frozen_food', label: 'Tiefkühlprodukte' },
+  { id: 'dry_goods', label: 'Trockenwaren' },
+  { id: 'beverages', label: 'Getränke' },
+  { id: 'sweets_snacks', label: 'Süßwaren & Snacks' },
+  { id: 'non_food', label: 'Non-Food' }
+];
 
 class ShoppingList extends React.Component {
   state = {
@@ -20,11 +32,18 @@ class ShoppingList extends React.Component {
     activeItemId: '',
     oldName: '',
     newName: '',
-    anchorEl: null, // For handling menu
+    anchorEl: null,
+    selectedTag: ''
   };
 
-  handleOpen = (itemId, itemTitle) => {
-    this.setState({ open: true, activeItemId: itemId, oldName: itemTitle });
+  handleOpen = (itemId, itemTitle, itemTag) => {
+    console.log("Dialog opened with tag:", itemTag); // Debugging
+    this.setState({
+      open: true,
+      activeItemId: itemId,
+      oldName: itemTitle,
+      selectedTag: itemTag || '' // Initialisiere mit vorhandenem Tag
+    });
   };
 
   handleClose = () => {
@@ -32,19 +51,32 @@ class ShoppingList extends React.Component {
   };
 
   handleSubmit = () => {
-    const { activeItemId, newName } = this.state;
-
+    const { activeItemId, newName, selectedTag } = this.state;
     if (!activeItemId || typeof activeItemId !== 'string') {
       console.error('Invalid _id:', activeItemId);
       return;
     }
 
-    this.props.renameItemFunc(activeItemId, newName);
-    this.handleClose();
+    this.props.renameItemFunc(activeItemId, newName, selectedTag)
+      .then(() => {
+        this.setState({
+          open: false,
+          selectedTag: '',
+          newName: ''
+        });
+      })
+      .catch(err => {
+        console.error('Error updating item:', err);
+        alert('Fehler beim Speichern des Tags');
+      });
   };
 
   updateName = (e) => {
     this.setState({ newName: e.target.value });
+  };
+
+  handleTagChange = (e) => {
+    this.setState({ selectedTag: e.target.value });
   };
 
   handleMenuOpen = (event) => {
@@ -76,6 +108,11 @@ class ShoppingList extends React.Component {
         return null;
       }
 
+      // Berechne den Tagname innerhalb der map-Funktion
+      const tagValue = item.get('tag') || ''; // Falls `tag` undefined ist, wird es zu einem leeren String
+      const tagName = AVAILABLE_TAGS.find(tag => tag.id === tagValue)?.label || 'Kein Tag';
+
+      console.log(item.get('tag')?.toString())
       return (
         <div key={`listitem_${item._id}`}>
           <ListItem className="shoppinglistitem">
@@ -88,9 +125,17 @@ class ShoppingList extends React.Component {
             </ListItemIcon>
             <ListItemText
               primary={
-                <span className={item.checked ? 'checkeditem' : 'uncheckeditem'}>
-                  {item.title}
-                </span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                  <span style={{ fontWeight: '500' }}>{item.title}</span>
+                  <span style={{
+                    backgroundColor: '#f5f5f5',
+                    padding: '2px 8px',
+                    borderRadius: '4px',
+                    fontSize: '0.875rem'
+                  }}>
+                    {tagName}
+                  </span>
+                </div>
               }
             />
             <IconButton onClick={this.handleMenuOpen}>
@@ -101,13 +146,15 @@ class ShoppingList extends React.Component {
               open={Boolean(anchorEl)}
               onClose={this.handleMenuClose}
             >
-              <MenuItem onClick={() => this.handleOpen(item._id, item.title)}>
+              <MenuItem onClick={() => this.handleOpen(item._id, item.get('title'), item.get('tag'))}>
                 Rename
               </MenuItem>
-              <MenuItem onClick={() => deleteFunc(item._id)}>Delete</MenuItem>
+              <MenuItem onClick={() => deleteFunc(item._id)}>
+                Delete
+              </MenuItem>
             </Menu>
+            <Divider />
           </ListItem>
-          <Divider />
         </div>
       );
     });
@@ -116,8 +163,7 @@ class ShoppingList extends React.Component {
       <div>
         {items}
         <Dialog open={open} onClose={this.handleClose} id={this._id}>
-          {/* Dialog content */}
-          <DialogTitle>Rename Item</DialogTitle>
+          <DialogTitle>Artikel bearbeiten</DialogTitle>
           <DialogContent>
             <TextField
               className="form-control"
@@ -126,7 +172,29 @@ class ShoppingList extends React.Component {
               defaultValue={oldName}
               onChange={this.updateName}
               fullWidth
+              label="Artikelname"
             />
+
+            {/* Neues Select für Tags */}
+            <FormControl fullWidth style={{ marginTop: '16px' }}>
+              <InputLabel id="tag-select-label">Tag auswählen</InputLabel>
+              <Select
+                labelId="tag-select-label"
+                id="tag-select"
+                value={this.state.selectedTag}
+                onChange={this.handleTagChange}
+                label="Tag"
+              >
+                <MenuItem value="">
+                  <em>Kein Tag ausgewählt</em>
+                </MenuItem>
+                {AVAILABLE_TAGS.map(tag => (
+                  <MenuItem key={tag.id} value={tag.id}>
+                    {tag.label}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </DialogContent>
           <DialogActions>{actions}</DialogActions>
         </Dialog>
