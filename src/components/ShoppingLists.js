@@ -308,7 +308,7 @@ ShoppingLists.propTypes = {
   openListFunc: PropTypes.func.isRequired,
   renameListFunc: PropTypes.func.isRequired,
   checkAllFunc: PropTypes.func.isRequired,
-  updateListOrder: PropTypes.func.isRequired, // Prop for updating list order
+  updateListOrder: PropTypes.func.isRequired,
   checkedCounts: PropTypes.instanceOf(List),
   totalCounts: PropTypes.instanceOf(List),
   setListsFunc: PropTypes.func.isRequired,
