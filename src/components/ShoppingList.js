@@ -144,12 +144,13 @@ class ShoppingList extends React.Component {
             <FormControl fullWidth>
               <InputLabel>Kategorie</InputLabel>
               <Select
+                data-cy="category-select" 
                 value={selectedTag}
                 onChange={this.handleTagChange}
                 label="Kategorie"
               >
                 {AVAILABLE_TAGS.map((tag) => (
-                  <MenuItem key={tag.id} value={tag.id}>
+                  <MenuItem key={tag.id} value={tag.id} data-cy={`category-option-${tag.label}`}>
                     {tag.label}
                   </MenuItem>
                 ))}

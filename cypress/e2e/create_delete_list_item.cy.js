@@ -6,7 +6,7 @@ beforeEach(() => {
   const time = new Date().getTime();
 
   // Create ShoppingList
-  cy.get('#add').click();
+  cy.get('button.MuiFab-primary.MuiFab-sizeSmall').click();
   cy.get('.MuiTextField-root').type(time + "{enter}");
   cy.get('.MuiButtonBase-root').eq(2).click();
   cy.get('[role="menuitem"]').eq(0).click();
@@ -17,10 +17,10 @@ describe('Create ShoppingListItem', () => {
   it('passes', () => {
 
     // Create ShoppingListItem
-    cy.get('#add').click();
+    cy.get('button.MuiFab-primary.MuiFab-sizeSmall').click();
     cy.get('.MuiTextField-root').type("Apple{enter}");
 
-    cy.get('#add').click();
+    cy.get('button.MuiFab-primary.MuiFab-sizeSmall').click();
     cy.get('.MuiTextField-root').type("Bannanas{enter}");
 
     // 0-4 are back, about, settings and add then 2 per item
@@ -33,7 +33,7 @@ describe('Delete ShoppingListItem', () => {
   it('passes', () => {
 
     // Create ShoppingListItem
-    cy.get('#add').click();
+    cy.get('button.MuiFab-primary.MuiFab-sizeSmall').click();
     cy.get('.MuiTextField-root').type("Apple{enter}");
 
     cy.get('.MuiButtonBase-root').eq(4).click();

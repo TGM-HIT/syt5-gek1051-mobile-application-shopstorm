@@ -228,6 +228,21 @@ class App extends React.Component {
     }).then(items => this.setState({ shoppingListItems: items }));
   };
 
+  renameShoppingList = (listId, newName) => {
+    if (!listId || typeof listId !== 'string') {
+      console.error('Invalid list ID:', listId);
+      return Promise.reject('Invalid list ID');
+    }
+  
+    return this.props.shoppingListRepository.get(listId)
+      .then(list => {
+        list = list.set('title', newName);
+        return this.props.shoppingListRepository.put(list);
+      })
+      .then(() => this.getShoppingLists())
+      .catch(err => console.error('Error renaming list:', err));
+  };
+
   renameShoppingListItem = (itemid, newname, selectedTag) => {
     if (!itemid || typeof itemid !== 'string') {
       console.error('Invalid item ID:', itemid);
@@ -365,20 +380,20 @@ class App extends React.Component {
    * Show UI for shopping lists
    */
   renderShoppingLists = () => {
-    if (this.state.shoppingLists.length < 1)
-      return (<Card style={{ margin: "12px 0" }}><CardHeader title={NOLISTMSG} /></Card>);
+    if (this.state.shoppingLists.length < 1) 
+      return ( <Card style={{margin:"12px 0"}}><CardHeader title={NOLISTMSG} /></Card> );
     return (
-      <ShoppingLists
-        shoppingLists={this.state.shoppingLists}
-        openListFunc={this.openShoppingList}
-        deleteListFunc={this.deleteShoppingList}
-        renameListFunc={this.renameShoppingList}
-        checkAllFunc={this.checkAllListItems}
-        totalCounts={this.state.totalShoppingListItemCount}
-        checkedCounts={this.state.checkedTotalShoppingListItemCount}
-        updateListOrder={this.updateListOrder}
-        setListsFunc={this.setLists}
-      />
+      <ShoppingLists 
+      shoppingLists={this.state.shoppingLists}
+      openListFunc={this.openShoppingList} 
+      deleteListFunc={this.deleteShoppingList} 
+      renameListFunc={this.renameShoppingList} 
+      checkAllFunc={this.checkAllListItems} 
+      totalCounts={this.state.totalShoppingListItemCount}
+      checkedCounts={this.state.checkedTotalShoppingListItemCount}
+      updateListOrder={this.updateListOrder}
+      setListsFunc={this.setLists}
+    />
 
     )
   }
@@ -496,20 +511,22 @@ class App extends React.Component {
           <div className="listsanditems" style={{ margin: '8px' }}>
             {adding && this.renderNewNameUI()}
             {view === 'lists' ? (
-              <ShoppingLists
+              <ShoppingLists 
                 shoppingLists={this.state.shoppingLists}
-                openListFunc={this.openShoppingList}
-                deleteListFunc={this.deleteShoppingList}
-                checkAllFunc={this.checkAllListItems}
+                openListFunc={this.openShoppingList} 
+                deleteListFunc={this.deleteShoppingList} 
+                renameListFunc={this.renameShoppingList} 
+                checkAllFunc={this.checkAllListItems} 
                 totalCounts={this.state.totalShoppingListItemCount}
                 checkedCounts={this.state.checkedTotalShoppingListItemCount}
                 updateListOrder={this.updateListOrder}
-              />
+                setListsFunc={this.setLists}
+              />            
             ) : (
-              <ShoppingList
-                shoppingListItems={this.state.shoppingListItems}
-                deleteFunc={this.deleteShoppingListItem}
-                toggleItemCheckFunc={this.toggleItemCheck}
+              <ShoppingList 
+                shoppingListItems={this.state.shoppingListItems} 
+                deleteFunc={this.deleteShoppingListItem} 
+                toggleItemCheckFunc={this.toggleItemCheck} 
                 renameItemFunc={this.renameShoppingListItem}
               />
             )}
