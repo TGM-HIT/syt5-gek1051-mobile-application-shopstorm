@@ -164,34 +164,41 @@ class App extends React.Component {
     let checkedCount = List();
     let totalCount = List();
     let lists = null;
-    this.props.shoppingListRepository
+    
+    return this.props.shoppingListRepository
       .find()
       .then((foundLists) => {
-        // Sort lists by order property, or default to existing order if not set
-        lists = foundLists.sort((a, b) => {
-          const aOrder = a.order !== undefined ? a.order : 9999;
-          const bOrder = b.order !== undefined ? b.order : 9999;
-          return aOrder - bOrder;
-        });
-        return foundLists;
+          lists = foundLists.sort((a, b) => {
+              const savedOrder = JSON.parse(localStorage.getItem('shoppingListOrder') || '[]');
+              
+              // Get index from saved order, or fall back to natural ordering
+              const getOrder = (list) => {
+                  const index = savedOrder.indexOf(list._id);
+                  return index === -1 ? Infinity : index;
+              };
+              
+              return getOrder(a) - getOrder(b);
+          });
+          
+          return foundLists;
       })
       .then(() => this.props.shoppingListRepository.findItemsCountByList())
       .then((countsList) => {
-        totalCount = countsList;
-        return this.props.shoppingListRepository.findItemsCountByList({
-          selector: { type: 'item', checked: true },
-          fields: ['list'],
-        });
+          totalCount = countsList;
+          return this.props.shoppingListRepository.findItemsCountByList({
+              selector: { type: 'item', checked: true },
+              fields: ['list'],
+          });
       })
       .then((checkedList) => {
-        checkedCount = checkedList;
-        this.setState({
-          view: 'lists',
-          shoppingLists: lists,
-          shoppingListItems: null,
-          checkedTotalShoppingListItemCount: checkedCount,
-          totalShoppingListItemCount: totalCount,
-        });
+          checkedCount = checkedList;
+          this.setState({
+              view: 'lists',
+              shoppingLists: lists,
+              shoppingListItems: null,
+              checkedTotalShoppingListItemCount: checkedCount,
+              totalShoppingListItemCount: totalCount,
+          });
       });
   };
 
