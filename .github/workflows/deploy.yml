@@ -30,6 +30,14 @@ jobs:
 
       - name: Create .nojekyll file
         run: touch build/.nojekyll
+        
+      - name: Fix asset paths in HTML files
+        run: |
+          find build -name "*.html" -type f -exec sed -i 's|src="/|src="./|g' {} \;
+          find build -name "*.html" -type f -exec sed -i 's|href="/|href="./|g' {} \;
+          # Exclude already relative paths
+          find build -name "*.html" -type f -exec sed -i 's|src="\.\/\./|src="./|g' {} \;
+          find build -name "*.html" -type f -exec sed -i 's|href="\.\/\./|href="./|g' {} \;
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
