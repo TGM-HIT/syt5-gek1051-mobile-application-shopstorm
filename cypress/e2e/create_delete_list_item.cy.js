@@ -1,7 +1,7 @@
 beforeEach(() => {
   cy.visit('http://localhost:3000')
   cy.window().should('have.property', 'document').and('have.property', 'readyState', 'complete');
-  cy.wait(2000);
+  cy.wait(1500);
 
   const time = new Date().getTime();
 
