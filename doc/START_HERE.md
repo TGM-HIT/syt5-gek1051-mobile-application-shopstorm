@@ -6,3 +6,5 @@
 | Conflict Handling               | [CONFLICTS.md](https://github.com/TGM-HIT/syt5-gek1051-mobile-application-shopstorm/blob/main/doc/CONFLICTS.md)                              |
 | Drag and Drop for Shoppinglists | [DRAG_DROP.md](https://github.com/TGM-HIT/syt5-gek1051-mobile-application-shopstorm/blob/main/doc/DRAG_DROP.md)                              |
 | Darkmode                        | [DRAG_DROP.md](https://github.com/TGM-HIT/syt5-gek1051-mobile-application-shopstorm/blob/main/doc/DARKMODE.md)                               |
+| Produkten Tags zuweisen         | [TAGS.md](https://github.com/TGM-HIT/syt5-gek1051-mobile-application-shopstorm/blob/main/doc/TAGS.md)                                        |
+
