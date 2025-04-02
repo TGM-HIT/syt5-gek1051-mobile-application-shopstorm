@@ -1,0 +1,47 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 23
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+        env:
+          WEBPACK_CLI_SKIP_IMPORT_LOCAL: true
+
+      - name: Create .nojekyll file
+        run: touch build/.nojekyll
+        
+      - name: Fix asset paths in HTML files
+        run: |
+          find build -name "*.html" -type f -exec sed -i 's|src="/|src="./|g' {} \;
+          find build -name "*.html" -type f -exec sed -i 's|href="/|href="./|g' {} \;
+          # Exclude already relative paths
+          find build -name "*.html" -type f -exec sed -i 's|src="\.\/\./|src="./|g' {} \;
+          find build -name "*.html" -type f -exec sed -i 's|href="\.\/\./|href="./|g' {} \;
+
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: build
+          branch: gh-pages
+          clean: true
