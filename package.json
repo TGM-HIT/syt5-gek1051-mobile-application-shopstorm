@@ -30,7 +30,9 @@
 		"pouchdb": "^9.0.0",
 		"pouchdb-all-dbs": "^1.1.1",
 		"pouchdb-find": "^9.0.0",
-		"prop-types": "^15.8.1"
+		"prop-types": "^15.8.1",
+		"react-router-dom": "^7.4.1",
+		"uuid": "^11.1.0"
 	},
 	"scripts": {
 		"start": "r3f-pack start",

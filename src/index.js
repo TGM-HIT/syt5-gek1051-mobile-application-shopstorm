@@ -5,6 +5,7 @@ import registerServiceWorker from './registerServiceWorker';
 import { ShoppingListFactory, ShoppingListRepositoryPouchDB } from 'ibm-shopping-list-model';
 import PouchDB from 'pouchdb';
 import PouchDBFind from 'pouchdb-find';
+import { DBProvider } from './components/DBContext';
 
 PouchDB.plugin(PouchDBFind);
 const localDB = new PouchDB('shopping_list_react');
@@ -33,12 +34,14 @@ registerServiceWorker();
 shoppingListRepository.ensureIndexes()
   .then(() => {
     root.render(
-      <App
-        shoppingListFactory={shoppingListFactory}
-        shoppingListRepository={shoppingListRepository}
-        localDB={localDB}
-        remoteDB={remoteDB}
-      />
+      <DBProvider localDB={localDB}>
+        <App
+          shoppingListFactory={shoppingListFactory}
+          shoppingListRepository={shoppingListRepository}
+          localDB={localDB}
+          remoteDB={remoteDB}
+        />
+      </DBProvider>
     );
   })
   .catch((error) => {
