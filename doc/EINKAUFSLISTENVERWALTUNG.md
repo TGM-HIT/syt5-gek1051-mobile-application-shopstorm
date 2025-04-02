@@ -140,4 +140,6 @@ else if (this.state.view === 'items') {
 - **Zustandsmanagement**: React-Komponentenzustand
 - **Kontextabhängige Objekterstellung**
 
-
+## Resources
+https://github.com/TGM-HIT/syt5-gek1051-mobile-application-shopstorm/blob/main/src/components/ShoppingList.js
+https://www.deepl.com
