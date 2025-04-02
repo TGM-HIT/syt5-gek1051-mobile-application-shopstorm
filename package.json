@@ -38,7 +38,7 @@
 		"predeploy": "npm run build",
 		"deploy": "gh-pages -d build",
 		"cy:open": "cypress open",
-		"test:cypress": "npx cypress run",
+		"test:cypress": "npx cypress run --browser chrome --headless",
 		"test:all": "npm-run-all -p start test:cypress"
 	},
 	"engines": {

@@ -8,7 +8,7 @@ beforeEach(() => {
 describe('Create ShoppingList', () => {
   it('passes', () => {
 
-    cy.get('#add').click();
+    cy.get('button.MuiFab-primary.MuiFab-sizeSmall').click();
     cy.get('.MuiTextField-root').type("Meine Shoppingliste{enter}");
     })
 })
@@ -16,9 +16,9 @@ describe('Create ShoppingList', () => {
 describe('Open ShoppingList', () => {
   it('passes', () => {
 
-    cy.get('#add').click();
+    cy.get('button.MuiFab-primary.MuiFab-sizeSmall').click();
     cy.get('.MuiTextField-root').type("Meine Shoppingliste{enter}");
-    cy.get('.MuiButtonBase-root').eq(2).click();
+    cy.get('.MuiButtonBase-root').eq(3).click();
     cy.get('[role="menuitem"]').eq(0).click();
   })
 })
@@ -26,9 +26,9 @@ describe('Open ShoppingList', () => {
 describe('Rename ShoppingList', () => {
   it('passes', () => {
 
-    cy.get('#add').click();
+    cy.get('button.MuiFab-primary.MuiFab-sizeSmall').click();
     cy.get('.MuiTextField-root').type("Meine Shoppingliste{enter}");
-    cy.get('.MuiButtonBase-root').eq(2).click();
+    cy.get('.MuiButtonBase-root').eq(3).click();
     cy.get('[role="menuitem"]').eq(1).click();
     cy.get('.MuiInputBase-root').clear();
     cy.get('.MuiInputBase-root').type("Neue Shoppingliste");
@@ -41,9 +41,9 @@ describe('Rename ShoppingList', () => {
 describe('Delete ShoppingList', () => {
   it('passes', () => {
 
-    cy.get('#add').click();
+    cy.get('button.MuiFab-primary.MuiFab-sizeSmall').click();
     cy.get('.MuiTextField-root').type("Meine Shoppingliste{enter}");
-    cy.get('.MuiButtonBase-root').eq(2).click();
+    cy.get('.MuiButtonBase-root').eq(3).click();
     cy.get('[role="menuitem"]').eq(2).click();
 
   })

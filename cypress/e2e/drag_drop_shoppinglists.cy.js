@@ -4,10 +4,10 @@ beforeEach(() => {
   cy.wait(1500);
 
   // Create ShoppingLists
-  cy.get('#add').click();
+  cy.get('button.MuiFab-primary.MuiFab-sizeSmall').click();
   cy.get('.MuiTextField-root').type("Shoppinglist 1{enter}");
 
-  cy.get('#add').click();
+  cy.get('button.MuiFab-primary.MuiFab-sizeSmall').click();
   cy.get('.MuiTextField-root').type("Shoppinglist 2{enter}");
 })
 
