@@ -740,12 +740,45 @@ class App extends React.Component {
               <AddIcon />
             </Fab>
 
+            {/* Settings Dialog */}
             <Dialog open={settingsOpen} onClose={this.handleCloseSettings}>
-              {/* Existing settings dialog content */}
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault(); // Prevent default form submission behavior
+                  localStorage.setItem('remoteUrl', this.tempdburl); // Save remote URL
+                  this.handleCloseSettings(); // Close the dialog
+                }}
+              >
+                <DialogTitle>Shopping List Settings</DialogTitle>
+                <DialogContent>
+                  <p>
+                    Enter a fully qualified URL (including username and password) to a remote IBM Cloudant,
+                    Apache CouchDB, or PouchDB database to sync your shopping list.
+                  </p>
+                  <TextField
+                    fullWidth
+                    placeholder="https://username:password@localhost:5984/database"
+                    onChange={(e) => (this.tempdburl = e.target.value)} // Update tempdburl state
+                  />
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={this.handleCloseSettings}>Cancel</Button>
+                  <Button type="submit" color="primary" variant="contained" onClick={this.handleSubmitSettings}>
+                    Submit
+                  </Button>
+                </DialogActions>
+              </form>
             </Dialog>
 
+            {/* About Dialog */}
             <Dialog open={aboutOpen} onClose={() => this.setState({ aboutOpen: false })}>
-              {/* Existing about dialog content */}
+              <DialogTitle>About</DialogTitle>
+              <DialogContent>
+                Shopping List is a Progressive Web App built using React and PouchDB.
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={() => this.setState({ aboutOpen: false })}>Close</Button>
+              </DialogActions>
             </Dialog>
           </div>
         </Router>
